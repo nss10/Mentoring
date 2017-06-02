@@ -1395,16 +1395,16 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         getData();
         if (this.tempResult != null && this.arr.length != 1) {
             BottomBar bottomBar;
-            setContentView(C0385R.layout.student_homepage);
-            this.test = (TextView) findViewById(C0385R.id.mentorName);
-            Toolbar toolbar = (Toolbar) findViewById(C0385R.id.toolbar);
-            DrawerLayout drawer = (DrawerLayout) findViewById(C0385R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, C0385R.string.navigation_drawer_open, C0385R.string.navigation_drawer_close);
+            setContentView(R.layout.student_homepage);
+            this.test = (TextView) findViewById(R.id.mentorName);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
             toolbar.setTitle((CharSequence) "My Attendance");
             toolbar.setTitleTextColor(-12303292);
-            NavigationView navigationView = (NavigationView) findViewById(C0385R.id.nav_view);
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             if (this.from.equals(Event.LOGIN)) {
                 navigationView.getMenu().getItem(0).setVisible(true);
                 navigationView.getMenu().getItem(1).setVisible(false);
@@ -1415,10 +1415,10 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             navigationView.setNavigationItemSelectedListener(this);
             navigationView.addOnLayoutChangeListener(new AnonymousClass20(navigationView));
             if (this.from.equals("mentor")) {
-                bottomBar = (BottomBar) findViewById(C0385R.id.bottomBar_mentor);
+                bottomBar = (BottomBar) findViewById(R.id.bottomBar_mentor);
                 bottomBar.setVisibility(0);
                 if (this.state.equals("repeat")) {
-                    bottomBar.selectTabWithId(C0385R.id.tab_set_remarks);
+                    bottomBar.selectTabWithId(R.id.tab_set_remarks);
                 }
             } else {
                 bottomBar = (BottomBar) findViewById(C0385R.id.bottomBar_student);

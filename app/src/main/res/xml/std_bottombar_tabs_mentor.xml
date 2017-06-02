@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/tab_student_dashboard"
+        icon="@drawable/ic_insert_emoticon_black_24dp"
+        title="DashBoard" />
+    <tab
+        id="@+id/tab_view_remarks"
+        icon="@drawable/ic_done_all_black_24dp"
+        title="View Remarks" />
+    <tab
+        id="@+id/tab_performance"
+        icon="@drawable/ic_equalizer_black_24dp"
+        title="View Performance" />
+    <tab
+        id="@+id/tab_set_remarks"
+        icon="@drawable/ic_create_black_24dp"
+        title="Set Remarks" />
+</tabs>

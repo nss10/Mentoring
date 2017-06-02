@@ -15,10 +15,9 @@
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="60dp"
 
-        layout="@layout/student_dashboard" />
+        layout="@layout/student_dashboard"
+        android:layout_alignBottom="@+id/view_performance" />
 
     <include
         android:id="@+id/RemarkView"
@@ -36,38 +35,12 @@
         layout="@layout/performance" />
 
     <include
-        android:id="@+id/view_change_password"
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
-        layout="@layout/change_password" />
-
-    <include
         android:id="@+id/view_remarks"
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
         layout="@layout/view_remarks" />
-
-    <com.jjoe64.graphview.helper.GraphViewXML
-        android:id="@+id/aggrGraph"
-        android:layout_width="350dip"
-        android:layout_height="100dip"
-        app:seriesData="0=0;"
-        app:seriesType="bar"
-        app:seriesColor="#ee0000"
-        android:visibility="invisible"
-        android:rotation="0"
-        android:layout_marginTop="460dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-
-
-
 
 
     <TextView
@@ -81,44 +54,36 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
-    <ScrollView
-        android:id="@+id/RemarkScroll"
+
+
+
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar_student"
+        android:visibility="invisible"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/RemHead"
-        android:layout_alignParentStart="true">
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        app:bb_tabXmlResource="@xml/std_bottombar_tabs_student" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-
-            android:layout_marginRight="12dp"
-            android:layout_marginEnd="12dp">
-            <TextView
-                android:text="TextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textAlignment="center"
-                android:textSize="22sp"
-                android:layout_marginBottom="22dp"
-                android:id="@+id/Remarks"
-
-                android:textStyle="normal|italic" />
-        </LinearLayout>
-    </ScrollView>
-
-
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar_mentor"
+        android:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimaryDark"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        android:layout_alignParentTop="true"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        app:bb_tabXmlResource="@xml/std_bottombar_tabs_mentor"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <include
+        android:id="@+id/view_change_password"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/change_password"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/view_performance" />
+
+
 </RelativeLayout>

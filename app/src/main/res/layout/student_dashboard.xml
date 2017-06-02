@@ -217,19 +217,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <com.jjoe64.graphview.helper.GraphViewXML
-        android:id="@+id/attGraph"
-        android:visibility="visible"
-        android:layout_width="75dp"
-        android:layout_height="300dp"
-        android:rotation="90.0"
-        app:seriesData="0=0;"
-        app:seriesType="bar"
-        app:seriesColor="#ee0000"
-        android:layout_below="@+id/htnoTag"
-        android:layout_alignRight="@+id/parentNo"
-        android:layout_alignEnd="@+id/parentNo" />
-
     <TextView
         android:textSize="20sp"
         android:textColor="#134566"
@@ -240,4 +227,17 @@
         android:textAlignment="center"
         android:layout_below="@+id/parentNo"
         android:layout_centerHorizontal="true" />
+
+    <com.jjoe64.graphview.helper.GraphViewXML
+        android:id="@+id/attGraph"
+        android:visibility="visible"
+        android:layout_width="75dp"
+        android:layout_height="300dp"
+        android:rotation="90.0"
+        app:seriesData="0=0;"
+        app:seriesType="bar"
+        app:seriesColor="#ee0000"
+        android:layout_below="@+id/parentNo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp" />
 </RelativeLayout>

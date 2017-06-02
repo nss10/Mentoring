@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circ_img"
+        android:visibility="visible"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/preview_default_profile"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/parentNo"
+        android:layout_alignEnd="@+id/parentNo" />
+    <LinearLayout
+        android:id="@+id/nameTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/circ_img"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/nameLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name : " />
+
+        <TextView
+            android:id="@+id/nameRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sample Name" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/htnoTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/nameTag"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/ht_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hall Ticket No : " />
+
+        <TextView
+            android:id="@+id/ht_noRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="14BD1A058X" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/htnoTag"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/class_idLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Year : " />
+
+        <TextView
+            android:id="@+id/class_idRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3" />
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/semLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Semester : " />
+
+        <TextView
+            android:id="@+id/semRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2" />
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/branchLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Branch : " />
+
+        <TextView
+            android:id="@+id/branchRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CSE" />
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/sectionLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Section : " />
+
+        <TextView
+            android:id="@+id/sectionRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="E" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/parentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/year"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/parentNameLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Parent Name : " />
+
+        <TextView
+            android:id="@+id/parentNameRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Madhusudhan Rao" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/parentNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/parentName"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:textColor="#561219"
+            android:id="@+id/parentNoLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Parent No : " />
+
+        <TextView
+            android:autoLink="phone"
+            android:linksClickable="true"
+            android:id="@+id/parentNoRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9032657199" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/otpLayout"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/circ_img"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:textColor="#ff0000"
+            android:id="@+id/OTPLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registration OTP : " />
+        <TextView
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:id="@+id/OTPRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="none" />
+    </LinearLayout>
+
+
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/link_change_password"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Change Password"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="onClick" />
+
+
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flag Student"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <com.jjoe64.graphview.helper.GraphViewXML
+        android:id="@+id/attGraph"
+        android:visibility="visible"
+        android:layout_width="75dp"
+        android:layout_height="300dp"
+        android:rotation="90.0"
+        app:seriesData="0=0;"
+        app:seriesType="bar"
+        app:seriesColor="#ee0000"
+        android:layout_below="@+id/htnoTag"
+        android:layout_alignRight="@+id/parentNo"
+        android:layout_alignEnd="@+id/parentNo" />
+
+    <TextView
+        android:textSize="20sp"
+        android:textColor="#134566"
+        android:id="@+id/AttendanceHead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attendance"
+        android:textAlignment="center"
+        android:layout_below="@+id/parentNo"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

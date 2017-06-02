@@ -3,43 +3,18 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_MyAttendance"
-            android:icon="@drawable/attendance"
-            android:title="Attendance" />
+            android:id="@+id/Logout"
+            android:icon="@drawable/logout"
+            android:title="Logout" />
         <item
-            android:id="@+id/nav_MyPerformance"
-            android:icon="@drawable/performance"
-            android:title="Performance" />
-        <item
-            android:id="@+id/nav_setRemarks"
-            android:icon="@drawable/attendance"
-            android:title="Set Remarks" />
-        <item
-            android:id="@+id/nav_setMentorFields"
-            android:icon="@drawable/performance"
-            android:title="Rate Student" />
+            android:id="@+id/Back"
+            android:icon="@drawable/ic_arrow_back_black_24dp"
+            android:title="Back" />
+
 
 
 
     </group>
 
-    <item android:title="Account">
-        <menu>
-            <item
-                android:id="@+id/Account"
-                android:icon="@drawable/std"
-                android:title="Account information" />
-            <item
-                android:id="@+id/Logout"
-                android:icon="@drawable/logout"
-                android:title="Logout" />
-            <item
-                android:id="@+id/Back"
-                android:icon="@drawable/logout"
-                android:title="Back" />
-
-
-        </menu>
-    </item>
 
 </menu>

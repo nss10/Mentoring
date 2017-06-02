@@ -1,10 +1,14 @@
 package kmit.mentoring;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +28,10 @@ public class MainActivity extends AppCompatActivity
     Button reg;
     String TAG="MAIN";
     boolean isCompatible = true;
+    public static final int RequestPermissionCode = 1;
+    int RequestCheckResult;
+    boolean RequestTF;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity
 
             reg=(Button)findViewById(R.id.regbutton);
             reg.setOnClickListener(this);
+            EnableRuntimePermission();
         }
 
         /*new Handler().postDelayed(new Runnable() {
@@ -192,4 +201,48 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+    public void EnableRuntimePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, "android.permission.READ_PHONE_STATE")) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Permission Required");
+            alertDialog.setCancelable(false);
+            alertDialog.setMessage("Please provide phone permissions to Student Mentoring .This helps you keep your account secured");
+            alertDialog.setButton(-1, "Provide Permissions", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                        Intent intent = new Intent();
+                        intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                        intent.setData(Uri.fromParts("package", MainActivity.this.getPackageName(), null));
+                        MainActivity.this.startActivity(intent);
+                    }
+
+            });
+            alertDialog.show();
+            return;
+        }
+        String[] strArr = new String[RequestPermissionCode];
+        strArr[0] = "android.permission.READ_PHONE_STATE";
+        ActivityCompat.requestPermissions(this, strArr, RequestPermissionCode);
+    }
+
+    public void onRequestPermissionsResult(int RC, String[] per, int[] PResult) {
+        switch (RC) {
+            case RequestPermissionCode /*1*/:
+                if (PResult.length <= 0 || PResult[0] != 0) {
+                    Toast.makeText(this, "Permission Canceled, Now your application cannot access IMEI.", Toast.LENGTH_SHORT).show();
+                }
+            default:
+        }
+    }
+
+    public void PermissionStatus() {
+        this.RequestCheckResult = ContextCompat.checkSelfPermission(getApplicationContext(), "android.permission.READ_PHONE_STATE");
+        if (this.RequestCheckResult == 0) {
+            this.RequestTF = true;
+        } else {
+            this.RequestTF = false;
+        }
+    }
 }
+

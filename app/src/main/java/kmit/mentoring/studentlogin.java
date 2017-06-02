@@ -1,78 +1,92 @@
 package kmit.mentoring;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.TimeoutException;
+public class studentlogin extends Activity implements OnClickListener {
+    String TAG;
+    Intent i;
+    EditText passwordEt;
+    EditText usernameEt;
 
-/**
- * Created by sesha sai on 1/10/2017.
- */
+    public studentlogin() {
+        this.TAG = "StudentLogin";
+    }
 
-public class studentlogin extends Activity{
-    EditText usernameEt,passwordEt;
-    String TAG="StudentLogin";
-    //Context context=getApplicationContext();
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        usernameEt=(EditText)findViewById(R.id.sid);
-        passwordEt=(EditText)findViewById(R.id.spass);
+        this.usernameEt = (EditText) findViewById(R.id.sid);
+        this.passwordEt = (EditText) findViewById(R.id.spass);
+    }
+
+    public String getIMEI(Context context) {
+        return ((TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE)).getDeviceId();
     }
 
     public void onLogin(View view) throws InterruptedException {
-        String username=usernameEt.getText().toString().trim();
-        String password=passwordEt.getText().toString().trim();
-        String type="Login";
-        //Toast.makeText(getApplicationContext(),"username :"+username+"!",Toast.LENGTH_LONG).show();
-        if(username.matches("")||password.matches(""))
-        {
-            Toast.makeText(getApplicationContext(),"Enter credentials to login",Toast.LENGTH_LONG).show();
-        }
-        else if(username.length()!=10)
-        {
-            Toast.makeText(getApplicationContext(),"Incorrect credentials",Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            //Toast.makeText(getApplicationContext(),username+","+password,Toast.LENGTH_LONG).show();
+        String username = this.usernameEt.getText().toString().trim();
+        String password = this.passwordEt.getText().toString().trim();
+        String type = "Login";
+        Button b = (Button) findViewById(R.id.sbutton);
+        b.setText("Logging in...");
+        if (username.matches(BuildConfig.FLAVOR) || password.matches(BuildConfig.FLAVOR)) {
+            b.setText("LOGIN");
+            Toast.makeText(getApplicationContext(), "Enter credentials to login", 1).show();
+        } else if (username.length() != 10) {
+            b.setText("LOGIN");
+            Toast.makeText(getApplicationContext(), "This is a student Login page. please Check!", 1).show();
+        } else {
+            String IMEI = getIMEI(this);
             BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-            String port=getString(R.string.connection_string);
-
-                Log.d(TAG,backgroundWorker.getStatus()+"before");
-                backgroundWorker.execute(type, username, password,port);
-                Log.d(TAG,backgroundWorker.getStatus()+"after1");
-                backgroundWorker.onProgressUpdate();
-
-
-
-            Log.d(TAG,"here again"+backgroundWorker.result);
-            if(backgroundWorker.result.matches("0"))
-                Toast.makeText(getApplicationContext(),"here again !!No internet"+backgroundWorker.result,Toast.LENGTH_LONG).show();
-            if(backgroundWorker.result.matches("1"))
-            {
-                Toast.makeText(getApplicationContext(),"login successful "+backgroundWorker.result,Toast.LENGTH_LONG).show();
-                SharedPreferences sharedPreferences=getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name),Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString(getString(R.string.user_name),username);
+            String port = getString(R.string.connection_string);
+            Log.d(this.TAG, backgroundWorker.getStatus() + "before");
+            backgroundWorker.execute(new String[]{type, username, password, port, IMEI});
+            Log.d(this.TAG, backgroundWorker.getStatus() + "after1");
+            backgroundWorker.onProgressUpdate(new Void[0]);
+            AlertDialog alertDialog = new Builder(this).create();
+            if (backgroundWorker.result.matches("1")) {
+                Toast.makeText(getApplicationContext(), "login successful " + backgroundWorker.result, Toast.LENGTH_SHORT).show();
+                Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
+                editor.putString(getString(R.string.user_name), username);
+                editor.putString("login_status", "1");
                 editor.commit();
-                Intent i=new Intent(this,StudentHome.class);
-                startActivity(i);
+                startActivity(new Intent(this, StudentHome.class));
+            } else if (backgroundWorker.result.equalsIgnoreCase("Already Logged in")) {
+                alertDialog.setTitle("Login Status");
+                alertDialog.setMessage("You cannot login in more than 3 devices at a time.");
+            } else if (backgroundWorker.result.matches("0")) {
+                alertDialog.setTitle("Login Status");
+                alertDialog.setMessage("Incorrect credentials !");
+            } else if (backgroundWorker.result.matches("NO NET")) {
+                alertDialog.setTitle("Internet required");
+                alertDialog.setMessage("Please check your internet connection and Login again!");
+            } else if (backgroundWorker.result.indexOf("MySQL server has gone away") >= 0) {
+                alertDialog.setTitle("We're Sorry");
+                alertDialog.setMessage("Server is currently down! Please come back later");
             }
+            b.setText("LOGIN");
+            alertDialog.show();
         }
     }
 
+    public void onClick(View v) {
+        if (v.getId() == R.id.link_forgot_password) {
+            i = new Intent(getApplicationContext(), register.class);
+        }
+        this.i.putExtra("title", "Forgot password?");
+        startActivity(this.i);
+    }
 }

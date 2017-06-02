@@ -5,6 +5,13 @@
     android:orientation="vertical"
     android:weightSum="1">
 
+    <Button
+        android:id="@+id/UpdateToServerStudentSide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click to Update to Server"
+        android:onClick="onClick" />
+
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

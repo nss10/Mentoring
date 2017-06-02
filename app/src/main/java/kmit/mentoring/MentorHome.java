@@ -320,10 +320,7 @@ public class MentorHome extends Activity implements NavigationView.OnNavigationI
                 toolbar.setTitle("MY STUDENTS");
                 break;
 
-            case R.id.Account:
 
-                toolbar.setTitle("MY Account");
-                break;
 
             case R.id.logout:
 

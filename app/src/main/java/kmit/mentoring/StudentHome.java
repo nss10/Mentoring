@@ -145,7 +145,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             StudentHome studentHome = StudentHome.this;
             localStruct kmit_mentoring_localStruct = new localStruct();
             kmit_mentoring_localStruct.getClass();
-            studentHome.db_obj = new localDB(StudentHome.this.getApplicationContext());
+            studentHome.db_obj = new localStruct().new localDB(StudentHome.this.getApplicationContext());
             StudentHome.this.db = StudentHome.this.db_obj.getWritableDatabase();
             String val = StudentHome.this.isStudentFlagged ? "1" : "0";
             ContentValues values = new ContentValues();
@@ -188,7 +188,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 values.put(mentorTable.column4, StudentHome.this.local_rem);
                 values.put(mentorTable.column5, StudentHome.this.local_date);
                 StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + StudentHome.this.sid + "'", null);
-                Toast.makeText(StudentHome.this.getApplicationContext(), "Remark Entered", 0).show();
+                Toast.makeText(StudentHome.this.getApplicationContext(), "Remark Entered", Toast.LENGTH_SHORT).show();
                 Log.d(StudentHome.this.TAG, this.val$new_rem + " " + dateFormat.format(d));
                 C03991.this.val$et.setText(BuildConfig.FLAVOR);
             }
@@ -217,7 +217,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 this.val$imm.toggleSoftInput(1, 0);
             }
             if (new_rem.length() == 0) {
-                Toast.makeText(StudentHome.this, "Please Enter a remark to submit", 0).show();
+                Toast.makeText(StudentHome.this, "Please Enter a remark to submit", Toast.LENGTH_SHORT).show();
                 return;
             }
             Builder builder = new Builder(StudentHome.this);
@@ -240,13 +240,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
             this.val$navigationView.removeOnLayoutChangeListener(this);
-            TextView textView = (TextView) this.val$navigationView.findViewById(C0385R.id.temp2);
+            TextView textView = (TextView) this.val$navigationView.findViewById(R.id.temp2);
             if (StudentHome.this.from.equals(Event.LOGIN)) {
                 textView.setText("Hello " + StudentHome.this.Student_Name);
             } else {
                 textView.setText("This is " + StudentHome.this.Student_Name);
             }
-            textView.setVisibility(0);
+            textView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -296,7 +296,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             } else if (this.val$lbg.result.equals("1")) {
                 StudentHome.this.onLogout();
             } else {
-                Toast.makeText(StudentHome.this, "Unable to logout", 0).show();
+                Toast.makeText(StudentHome.this, "Unable to logout", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -414,9 +414,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
             if (((int) parent.getItemIdAtPosition(position)) > 1) {
                 this.val$sp.setSelection(1);
-                EditText et = (EditText) StudentHome.this.findViewById(C0385R.id.RemarkText);
+                EditText et = (EditText) StudentHome.this.findViewById(R.id.RemarkText);
                 if (position == 8) {
-                    Toast.makeText(StudentHome.this, "Type the backlog subject name", 0).show();
+                    Toast.makeText(StudentHome.this, "Type the backlog subject name", Toast.LENGTH_SHORT).show();
                 }
                 if (et.getText().length() != 0) {
                     et.setText(et.getText().toString().trim() + "," + ((String) parent.getItemAtPosition(position)) + " ");
@@ -446,13 +446,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         public void run() {
             if (((double) StudentHome.this.Acad_loader) < StudentHome.this.Academic_Aggregate) {
-                this.val$AcadValue.setText(StudentHome.this.Acad_loader + BuildConfig.FLAVOR);
+                this.val$AcadValue.setText(StudentHome.this.Acad_loader +"");
                 StudentHome studentHome = StudentHome.this;
                 studentHome.Acad_loader += 3;
                 this.val$h.postDelayed(this, 3);
                 return;
             }
-            this.val$AcadValue.setText(StudentHome.round(StudentHome.this.Academic_Aggregate, 2) + BuildConfig.FLAVOR);
+            this.val$AcadValue.setText(StudentHome.round(StudentHome.this.Academic_Aggregate, 2) +"");
             StudentHome.this.Acad_loader = 0;
         }
     }
@@ -467,30 +467,30 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         public void onTabSelected(int tabId) {
             switch (tabId) {
-                case C0385R.id.tab_student_dashboard /*2131689762*/:
+                case R.id.tab_student_dashboard /*2131689762*/:
                     this.val$toolbar.setTitle((CharSequence) "DashBoard");
-                    StudentHome.this.setAreaFor(C0385R.id.student_dashboard);
+                    StudentHome.this.setAreaFor(R.id.student_dashboard);
                     StudentHome.this.setProfile();
                     StudentHome.this.getAttGraph(StudentHome.this.Attendance);
-                case C0385R.id.tab_view_remarks /*2131689763*/:
+                case R.id.tab_view_remarks /*2131689763*/:
                     ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
                     pd.setProgressStyle(1);
                     StudentHome.this.getData();
                     this.val$toolbar.setTitle((CharSequence) "Attendance & Remarks");
-                    StudentHome.this.setAreaFor(C0385R.id.view_remarks);
+                    StudentHome.this.setAreaFor(R.id.view_remarks);
                     StudentHome.this.getRemarks();
                     Log.d(StudentHome.this.TAG, "Button Clicked");
                     pd.dismiss();
-                case C0385R.id.tab_performance /*2131689764*/:
+                case R.id.tab_performance /*2131689764*/:
                     this.val$toolbar.setTitle((CharSequence) "Performance");
-                    StudentHome.this.setAreaFor(C0385R.id.view_performance);
+                    StudentHome.this.setAreaFor(R.id.view_performance);
                     StudentHome.this.showPerformance();
                     StudentHome.this.showAcadValue();
                     Log.d(StudentHome.this.TAG, "Button Clicked");
-                case C0385R.id.tab_set_remarks /*2131689765*/:
+                case R.id.tab_set_remarks /*2131689765*/:
                     this.val$toolbar.setTitle((CharSequence) "Set Remarks");
-                    StudentHome.this.setAreaFor(C0385R.id.RemarkView);
-                    StudentHome.this.findViewById(C0385R.id.RemarkView).setVisibility(0);
+                    StudentHome.this.setAreaFor(R.id.RemarkView);
+                    StudentHome.this.findViewById(R.id.RemarkView).setVisibility(View.VISIBLE);
                     StudentHome.this.nav_SetRemark();
                     Log.d(StudentHome.this.TAG, "Button Clicked");
                 default:
@@ -518,7 +518,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         public void onTap(Series series, DataPointInterface dataPoint) {
             StudentHome.this.sp.setSelection(0);
-            ((TextView) StudentHome.this.findViewById(C0385R.id.NoGraph)).setVisibility(4);
+            ((TextView) StudentHome.this.findViewById(R.id.NoGraph)).setVisibility(View.INVISIBLE);
             StudentHome.this.sp.setSelection(8);
         }
     }
@@ -593,7 +593,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 IOException e2;
                 Bitmap image = null;
                 try {
-                    URL url = new URL(StudentHome.this.getString(C0385R.string.connection_string) + "getImage.php?id=" + params[0]);
+                    URL url = new URL(StudentHome.this.getString(R.string.connection_string) + "getImage.php?id=" + params[0]);
                     URL url2;
                     try {
                         Log.d(StudentHome.this.TAG, BuildConfig.FLAVOR + url.openConnection().getInputStream());
@@ -614,10 +614,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     e = e5;
                     e.printStackTrace();
                     return image;
-                } catch (IOException e6) {
-                    e2 = e6;
-                    e2.printStackTrace();
-                    return image;
                 }
                 return image;
             }
@@ -636,9 +632,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     }
 
     void updateRatingToLocal() {
-        localStruct kmit_mentoring_localStruct = new localStruct();
-        kmit_mentoring_localStruct.getClass();
-        this.db_obj = new localDB(getApplicationContext());
+
+        this.db_obj = new localStruct().new localDB(getApplicationContext());
         this.db = this.db_obj.getWritableDatabase();
         String val = this.isRatingSubmittable ? "1" : "0";
         ContentValues values = new ContentValues();
@@ -648,32 +643,31 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     }
 
     void nav_SetRemark() {
-        Spinner sp = (Spinner) findViewById(C0385R.id.RemarkSpinner);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(this, C0385R.array.RemarkList, 17367049);
-        adapter.setDropDownViewResource(17367049);
+        Spinner sp = (Spinner) findViewById(R.id.RemarkSpinner);
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.RemarkList, android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
-        Button submitRemark = (Button) findViewById(C0385R.id.SubmitRemark);
-        localStruct kmit_mentoring_localStruct = new localStruct();
-        kmit_mentoring_localStruct.getClass();
-        this.db_obj = new localDB(getApplicationContext());
+        Button submitRemark = (Button) findViewById(R.id.SubmitRemark);
+        this.db_obj = new localStruct().new localDB(getApplicationContext());
         this.db = this.db_obj.getWritableDatabase();
-        InputMethodManager imm = (InputMethodManager) getSystemService("input_method");
-        EditText et = (EditText) findViewById(C0385R.id.RemarkText);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        EditText et = (EditText) findViewById(R.id.RemarkText);
         submitRemark.setOnClickListener(new C03991(et, imm));
-        ((Button) findViewById(C0385R.id.ClearRemark)).setOnClickListener(new C04002(et));
-        ((Button) findViewById(C0385R.id.submitMentorFields)).setOnClickListener(new C04043());
+        ((Button) findViewById(R.id.ClearRemark)).setOnClickListener(new C04002(et));
+        ((Button) findViewById(R.id.submitMentorFields)).setOnClickListener(new C04043());
         sp.setOnTouchListener(new C04054(imm));
         sp.setOnItemSelectedListener(new C04065(imm, sp));
     }
 
     void changePassword() {
-        EditText et_new_pwd = (EditText) findViewById(C0385R.id.new_pwd);
-        EditText et_confirm_new_pwd = (EditText) findViewById(C0385R.id.confirm_new_pwd);
-        Button change_pwd = (Button) findViewById(C0385R.id.button_change_password);
-        String cur_pwd = ((EditText) findViewById(C0385R.id.cur_pwd)).getText().toString().trim();
+        EditText et_new_pwd = (EditText) findViewById(R.id.new_pwd);
+        EditText et_confirm_new_pwd = (EditText) findViewById(R.id.confirm_new_pwd);
+        Button change_pwd = (Button) findViewById(R.id.button_change_password);
+        String cur_pwd = ((EditText) findViewById(R.id.cur_pwd)).getText().toString().trim();
+        String new_pwd = ((EditText) findViewById(R.id.new_pwd)).getText().toString().trim();
         if (et_new_pwd.getText().toString().trim().equals(et_confirm_new_pwd.getText().toString().trim())) {
             setPasswordBG spbg = new setPasswordBG(this);
-            spbg.execute(new String[]{getString(C0385R.string.connection_string), this.sid, cur_pwd, new_pwd});
+            spbg.execute(new String[]{getString(R.string.connection_string), this.sid, cur_pwd, new_pwd});
             spbg.onProgressUpdate(new Void[0]);
             return;
         }
@@ -767,14 +761,14 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     void showAcadValue() {
         TextView AcadValue = (TextView) findViewById(R.id.AcadValue);
         if (this.Academic_Aggregate == 0.0d) {
-            AcadValue.setVisibility(4);
+            AcadValue.setVisibility(View.VISIBLE);
         }
         Handler h = new Handler();
         h.post(new C04076(AcadValue, h));
     }
 
     public static double round(double value, int places) {
-        Log.d("StudentHome", value + BuildConfig.FLAVOR);
+        Log.d("StudentHome", value + "");
         if (((int) value) == 0) {
             return 0.0d;
         }
@@ -1329,50 +1323,50 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     }
                 }
             }
-        }
-    }
+
+
 
     void setCircularImage() {
         if (!this.defaultImage) {
-            ((CircleImageView) findViewById(C0385R.id.circ_img)).setImageBitmap(decodeBase64(this.studentImage));
+            ((CircleImageView) findViewById(R.id.circ_img)).setImageBitmap(decodeBase64(this.studentImage));
             Log.d(this.TAG, "getImage done");
         }
     }
 
     void setProfile() {
-        ((TextView) findViewById(C0385R.id.ht_noRight)).setText(this.sid);
-        ((TextView) findViewById(C0385R.id.nameRight)).setText(this.Student_Name);
-        ((TextView) findViewById(C0385R.id.parentNameRight)).setText(this.Parent_Name);
-        ((TextView) findViewById(C0385R.id.class_idRight)).setText((this.sem % 2 == 0 ? this.sem / 2 : (this.sem / 2) + 1) + BuildConfig.FLAVOR);
+        ((TextView) findViewById(R.id.ht_noRight)).setText(this.sid);
+        ((TextView) findViewById(R.id.nameRight)).setText(this.Student_Name);
+        ((TextView) findViewById(R.id.parentNameRight)).setText(this.Parent_Name);
+        ((TextView) findViewById(R.id.class_idRight)).setText((this.sem % 2 == 0 ? this.sem / 2 : (this.sem / 2) + 1) + BuildConfig.FLAVOR);
         Log.d(this.TAG, "defaultImageStatus in setProfile = " + this.defaultImage);
         setCircularImage();
-        ((TextView) findViewById(C0385R.id.branchRight)).setText(this.class_id.substring(1, 3).equalsIgnoreCase("IT") ? "IT" : this.class_id.substring(1, 3).toUpperCase() + "E");
-        ((TextView) findViewById(C0385R.id.sectionRight)).setText(this.class_id.substring(3).toUpperCase());
-        ((TextView) findViewById(C0385R.id.semRight)).setText((this.sem % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
+        ((TextView) findViewById(R.id.branchRight)).setText(this.class_id.substring(1, 3).equalsIgnoreCase("IT") ? "IT" : this.class_id.substring(1, 3).toUpperCase() + "E");
+        ((TextView) findViewById(R.id.sectionRight)).setText(this.class_id.substring(3).toUpperCase());
+        ((TextView) findViewById(R.id.semRight)).setText((this.sem % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
         Log.d(this.TAG, "setProfile isStudentFlagged = " + this.isStudentFlagged);
         CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
         cb.setChecked(this.isStudentFlagged);
         Log.d(this.TAG, this.sid);
         if (!this.sid.equalsIgnoreCase("14BD1A052X")) {
-            ((TextView) findViewById(C0385R.id.parentNoLeft)).setVisibility(4);
-            ((TextView) findViewById(C0385R.id.parentNoRight)).setVisibility(4);
+            ((TextView) findViewById(R.id.parentNoLeft)).setVisibility(View.INVISIBLE);
+            ((TextView) findViewById(R.id.parentNoRight)).setVisibility(View.INVISIBLE);
         }
         if (this.from.equals(Event.LOGIN)) {
-            cb.setVisibility(4);
-            ((TextView) findViewById(C0385R.id.link_change_password)).setVisibility(0);
+            cb.setVisibility(View.INVISIBLE);
+            ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.VISIBLE);
         } else if (this.from.equals("mentor")) {
             if (this.otp != null) {
-                ((LinearLayout) findViewById(C0385R.id.otpLayout)).setVisibility(0);
-                ((TextView) findViewById(C0385R.id.OTPRight)).setText(this.otp);
+                ((LinearLayout) findViewById(R.id.otpLayout)).setVisibility(View.VISIBLE);
+                ((TextView) findViewById(R.id.OTPRight)).setText(this.otp);
             }
-            cb.setVisibility(0);
-            ((TextView) findViewById(C0385R.id.link_change_password)).setVisibility(4);
+            cb.setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.INVISIBLE);
         }
         cb.setOnCheckedChangeListener(new AnonymousClass19(cb));
     }
 
     String getLoginStatus() {
-        String port = getString(C0385R.string.connection_string);
+        String port = getString(R.string.connection_string);
         this.scbg = new statusCheckBG(this);
         this.scbg.execute(new String[]{port, this.sid});
         this.scbg.onProgressUpdate(new Void[0]);
@@ -1380,7 +1374,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             return this.scbg.result;
         }
         Log.d(this.TAG, "scbg.result" + this.scbg.result);
-        Toast.makeText(this, this.scbg.result, 0).show();
+        Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
         Log.d(this.TAG, "Just before return");
         return null;
     }
@@ -1403,7 +1397,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             drawer.setDrawerListener(toggle);
             toggle.syncState();
             toolbar.setTitle((CharSequence) "My Attendance");
-            toolbar.setTitleTextColor(-12303292);
+            toolbar.setTitleTextColor(Color.GREEN);
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             if (this.from.equals(Event.LOGIN)) {
                 navigationView.getMenu().getItem(0).setVisible(true);
@@ -1416,13 +1410,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             navigationView.addOnLayoutChangeListener(new AnonymousClass20(navigationView));
             if (this.from.equals("mentor")) {
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_mentor);
-                bottomBar.setVisibility(0);
+                bottomBar.setVisibility(View.VISIBLE);
                 if (this.state.equals("repeat")) {
                     bottomBar.selectTabWithId(R.id.tab_set_remarks);
                 }
             } else {
-                bottomBar = (BottomBar) findViewById(C0385R.id.bottomBar_student);
-                bottomBar.setVisibility(0);
+                bottomBar = (BottomBar) findViewById(R.id.bottomBar_student);
+                bottomBar.setVisibility(View.VISIBLE);
             }
             bottomBar.setOnTabSelectListener(new AnonymousClass21(toolbar));
             new Handler().postDelayed(new Runnable() {
@@ -1433,11 +1427,11 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     if (StudentHome.this.getLoginStatus() != null) {
                         StudentHome.this.LoggedInDevices = StudentHome.this.getLoginStatus().split(",");
                         if (StudentHome.this.getLoginStatus().indexOf(StudentHome.this.getIMEI(StudentHome.this)) < 0) {
-                            Toast.makeText(StudentHome.this, "You are logged out from " + StudentHome.this.sid, 0).show();
+                            Toast.makeText(StudentHome.this, "You are logged out from " + StudentHome.this.sid, Toast.LENGTH_SHORT).show();
                             StudentHome.this.onLogout();
                             return;
                         } else if (StudentHome.this.LoggedInDevices.length > 0) {
-                            Toast.makeText(StudentHome.this, "You are currently logged in " + StudentHome.this.LoggedInDevices.length + " device(s)", 0).show();
+                            Toast.makeText(StudentHome.this, "You are currently logged in " + StudentHome.this.LoggedInDevices.length + " device(s)", Toast.LENGTH_SHORT).show();
                             return;
                         } else {
                             return;
@@ -1451,8 +1445,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     }
 
     void showPerformance() {
-        this.adapter = ArrayAdapter.createFromResource(this, R.array.fieldList, 17367049);
-        this.adapter.setDropDownViewResource(17367049);
+        this.adapter = ArrayAdapter.createFromResource(this, R.array.fieldList, android.R.layout.simple_spinner_dropdown_item);
+        this.adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.sp = (Spinner) findViewById(R.id.spinner_perf);
         this.sp.setAdapter(this.adapter);
         this.sp.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -1460,7 +1454,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
                 ((TextView) parent.getChildAt(0)).setTextSize(18.0f);
                 if (((int) parent.getItemIdAtPosition(position)) > 0) {
-                    ((TextView) StudentHome.this.findViewById(C0385R.id.NoGraph)).setVisibility(4);
+                    ((TextView) StudentHome.this.findViewById(R.id.NoGraph)).setVisibility(View.INVISIBLE);
                     if (position <= 7) {
                         StudentHome.this.getFieldGraph(((int) parent.getItemIdAtPosition(position)) - 1);
                     } else {
@@ -1480,7 +1474,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     public void onBackPressed() {
         if (!this.ExitFlag) {
             this.ExitFlag = true;
-            Toast.makeText(this, "Please click BACK again to leave this page", 0).show();
+            Toast.makeText(this, "Please click BACK again to leave this page", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     StudentHome.this.ExitFlag = false;
@@ -1502,12 +1496,12 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(C0385R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     void onLogout() {
-        Editor editor = getApplicationContext().getSharedPreferences(getString(C0385R.string.sp_file_name), 0).edit();
+        Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
         editor.remove("username");
         editor.remove("login_status");
         editor.commit();
@@ -1520,9 +1514,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         getData();
-        Toolbar toolbar = (Toolbar) findViewById(C0385R.id.toolbar);
-        if (id == C0385R.id.Logout) {
-            ((DrawerLayout) findViewById(C0385R.id.drawer_layout)).closeDrawer((int) GravityCompat.START, true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (id == R.id.Logout) {
+            ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START, true);
             Log.d(this.TAG, "hasInternet = " + this.hasInternet);
             if (getLoginStatus() == null) {
                 this.hasInternet = false;
@@ -1531,7 +1525,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
             if (this.hasInternet) {
                 LogoutBG lbg = new LogoutBG(this);
-                String port = getString(C0385R.string.connection_string);
+                String port = getString(R.string.connection_string);
                 AlertDialog alertDialog = new Builder(this).create();
                 alertDialog.setTitle("Logout");
                 alertDialog.setMessage("Your account is already active in some other device");
@@ -1546,34 +1540,34 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 Handler h1 = new Handler();
                 h1.post(new AnonymousClass27(lbg, h1));
             } else {
-                Toast.makeText(this, "NO NET", 0).show();
+                Toast.makeText(this, "NO NET", Toast.LENGTH_SHORT).show();
             }
-        } else if (id == C0385R.id.Back) {
+        } else if (id == R.id.Back) {
             startActivity(new Intent(this, MentorHome.class));
         }
-        ((DrawerLayout) findViewById(C0385R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
+        ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
         return true;
     }
 
     public void onClick(View v) {
-        if (v.getId() == C0385R.id.link_change_password) {
-            setAreaFor(C0385R.id.view_change_password);
-            ((Button) findViewById(C0385R.id.button_change_password)).setOnClickListener(new OnClickListener() {
+        if (v.getId() == R.id.link_change_password) {
+            setAreaFor(R.id.view_change_password);
+            ((Button) findViewById(R.id.button_change_password)).setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     StudentHome.this.changePassword();
                 }
             });
-        } else if (v.getId() == C0385R.id.link_back) {
-            setAreaFor(C0385R.id.student_dashboard);
+        } else if (v.getId() == R.id.link_back) {
+            setAreaFor(R.id.student_dashboard);
             setProfile();
             getAttGraph(this.Attendance);
-        } else if (v.getId() == C0385R.id.UpdateToServerStudentSide) {
+        } else if (v.getId() == R.id.UpdateToServerStudentSide) {
             Log.d(this.TAG, "Update To server Clicked");
-            Button b = (Button) findViewById(C0385R.id.UpdateToServerStudentSide);
+            Button b = (Button) findViewById(R.id.UpdateToServerStudentSide);
             b.setText("Updating Data...");
             b.setClickable(false);
-            if (new UpdateData(this, getString(C0385R.string.connection_string), this.mentor_id, this.sem).UpdateToServer()) {
-                Toast.makeText(this, "Data Updated", 0).show();
+            if (new UpdateData(this, getString(R.string.connection_string), this.mentor_id, this.sem).UpdateToServer()) {
+                Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(this, MentorHome.class);
                 i.putExtra("coming_from", this.sid);
                 Editor editor = getApplicationContext().getSharedPreferences("from_student", 0).edit();
@@ -1582,7 +1576,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 startActivity(i);
                 return;
             }
-            Toast.makeText(this, "NO NET", 0).show();
+            Toast.makeText(this, "NO NET", Toast.LENGTH_LONG).show();
             b.setText("CLICK TO UPDATE TO SERVER");
         }
     }

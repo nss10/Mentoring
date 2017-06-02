@@ -85,21 +85,8 @@ public class temp extends Activity
         int id = item.getItemId();
         Toolbar toolbar;
         toolbar = (Toolbar) findViewById(R.id.toolbartemp);
-        if (id == R.id.nav_MyPerformance) {
 
-            toolbar.setTitle("My Performance");
-            /*Intent intent=new Intent(this,StudentHome.class);
-            startActivity(intent);*/
-
-        }
-        else if(id==R.id.nav_MyAttendance){
-            toolbar.setTitle("My Attendance");
-        }
-
-        else if (id == R.id.Account) {
-            toolbar.setTitle("My Account");
-
-        } else if (id == R.id.Logout) {
+        if (id == R.id.Logout) {
             Intent intent=new Intent(this,MainActivity.class);
             startActivity(intent);
         }

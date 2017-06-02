@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:background="@drawable/whitebg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@drawable/whitebg"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/kmitpng"
+            android:id="@+id/imageView3"
+            android:layout_marginTop="25dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/slabel"
+            android:layout_alignStart="@+id/slabel" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STUDENT LOGIN"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:id="@+id/slabel"
+            android:layout_below="@+id/imageView3"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="19dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:gravity="center"
+            android:hint="Roll No"
+            android:ems="10"
+            android:id="@+id/sid"
+            android:layout_centerInParent="false"
+            android:layout_marginTop="22dp"
+            android:layout_below="@+id/slabel"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+        <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:id="@+id/spass"
+        android:ems="10"
+        android:gravity="center"
+        android:layout_below="@id/sid"
+        android:hint="Password"
+         />
+
+        <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="LOGIN"
+        android:id="@+id/sbutton"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:background="@drawable/shape"
+        android:textSize="20sp"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/spass"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:onClick="onLogin"/>
+
+
+
+    </RelativeLayout>
+</ScrollView>

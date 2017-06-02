@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <!--android:layout_above="@+id/aggrGraph"-->
+
+
+    <com.jjoe64.graphview.helper.GraphViewXML
+        android:id="@+id/graph"
+        android:layout_width="300dip"
+        app:seriesData="0=0;"
+        app:seriesType="bar"
+        app:seriesColor="#ee0000"
+        android:visibility="invisible"
+        android:layout_height="300dip"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/RemarkScroll" />
+
+
+    <TextView
+        android:text="Remarks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:textColor="#134566"
+        android:id="@+id/RemHead"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ScrollView
+        android:id="@+id/RemarkScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/RemHead"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+
+            android:layout_marginRight="12dp"
+            android:layout_marginEnd="12dp">
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                android:textSize="22sp"
+                android:layout_marginBottom="22dp"
+                android:id="@+id/Remarks"
+
+                android:textStyle="normal|italic" />
+
+            <TextView
+                android:text="Academic Aggregate"
+                android:layout_width="match_parent"
+                android:layout_height="17dp"
+                android:textSize="26sp"
+                android:textColor="#134566"
+                android:id="@+id/AcadHead"
+                android:visibility="invisible"
+
+                android:layout_alignLeft="@+id/RemHead"
+                android:layout_alignStart="@+id/RemHead" />
+        </LinearLayout>
+    </ScrollView>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimaryDark"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <com.jjoe64.graphview.helper.GraphViewXML
+        android:id="@+id/attGraph"
+        android:layout_width="75dip"
+        android:layout_height="300dip"
+        app:seriesData="0=0;"
+        app:seriesType="bar"
+        app:seriesColor="#ee0000"
+        android:visibility="invisible"
+        android:rotation="90"
+        android:layout_above="@+id/RemarkScroll"
+        android:layout_alignLeft="@+id/RemHead"
+        android:layout_alignStart="@+id/RemHead"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:text="012345678901234567890123456789"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#134566"
+        android:id="@+id/temp"
+        android:layout_marginBottom="22dp"
+        android:layout_marginRight="9dp"
+        android:layout_marginEnd="9dp"
+        android:layout_alignBottom="@+id/attGraph"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Attendance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:textColor="#134566"
+        android:id="@+id/AttendanceHead"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignRight="@+id/temp"
+        android:layout_alignEnd="@+id/temp" />
+
+
+    <com.jjoe64.graphview.helper.GraphViewXML
+        android:id="@+id/acadGraph"
+        android:layout_width="75dip"
+        android:layout_height="300dip"
+        app:seriesData="0=74;"
+        app:seriesType="bar"
+        app:seriesColor="#ee0000"
+        android:visibility="invisible"
+        android:rotation="90"
+        android:layout_marginRight="31dp"
+        android:layout_marginEnd="31dp"
+        android:layout_alignTop="@+id/RemHead"
+        android:layout_toLeftOf="@+id/aggrGraph"
+        android:layout_toStartOf="@+id/aggrGraph"
+        android:layout_marginTop="19dp" />
+
+    <TextView
+        android:text="Tap on any grapgh to get sem-wise performance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:textColor="#134566"
+        android:visibility="invisible"
+        android:id="@+id/NoGraph"
+        android:textAlignment="center"
+        android:layout_alignBaseline="@+id/AttendanceHead"
+        android:layout_alignBottom="@+id/AttendanceHead"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <com.jjoe64.graphview.helper.GraphViewXML
+        android:id="@+id/aggrGraph"
+        android:layout_width="350dip"
+        android:layout_height="100dip"
+        app:seriesData="0=0;"
+        app:seriesType="bar"
+        app:seriesColor="#ee0000"
+        android:visibility="invisible"
+        android:rotation="0"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/spinner" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textAlignment="center"
+        android:id="@+id/spinner"
+        android:visibility="invisible"
+
+        android:layout_below="@+id/AttendanceHead"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

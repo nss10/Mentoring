@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Mentoring</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="sp_file_name">credentials</string>
+    <string name="user_name">username</string>
+    <string name="just_logged_in">justLoggedIn</string>
+    <string name="name_of_user">nameOfUser</string>
+    <string name="action_settings">Settings</string>
+    <string name="year_default">--------</string>
+    <string name="connection_string">http://leisurely-marines.000webhostapp.com/mentoringApp/</string>
+    <string-array name="fieldList">
+        <item>Tap here to select a Field</item>`
+        <item>Group Discussions</item>
+        <item>Communication Skills</item>
+        <item>Grooming</item>
+        <item>Behavior With Peers</item>
+        <item>Behavior With Faculty</item>
+        <item>Co-Cirricular Activities</item>
+        <item>Extra Cirricular Activities</item>
+        <item>Academic Performance</item>
+    </string-array>
+    <string-array name="RollList">
+        <item>14BD1A052X</item>
+        <item>14BD1A053K</item>
+        <item>14BD1A042W</item>
+        <item>13bd1A0392</item>
+
+    </string-array>
+
+
+    <string-array name="RemarkList">
+
+        <item>Select a Remark</item>
+
+        <item>Low attendance</item>
+        <item>Not attentive in class</item>
+        <item>Facing difficulty in subjects</item>
+        <item>Not submiting records and assignments in time</item>
+        <item>Needs to improve communication skills</item>
+        <item>Needs to participate in curricular activities</item>
+        <item>Backlogs : </item>
+    </string-array>
+
+</resources>

@@ -700,7 +700,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             vp.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.NoGraph)).setVisibility(View.VISIBLE);
             this.graph = (GraphView) findViewById(R.id.graph);
-            this.graph.setVisibility(View.VISIBLE);
+            this.graph.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -1412,6 +1412,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
             navigationView.setNavigationItemSelectedListener(this);
             navigationView.addOnLayoutChangeListener(new AnonymousClass20(navigationView));
+            Log.d(TAG,from + "printing from!");
             if (this.from.equals("mentor")) {
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_mentor);
                 bottomBar.setVisibility(View.VISIBLE);

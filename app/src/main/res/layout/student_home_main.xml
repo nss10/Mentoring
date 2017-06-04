@@ -12,19 +12,21 @@
 
     <include
         android:id="@+id/student_dashboard"
+
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         layout="@layout/student_dashboard"
-        android:layout_alignBottom="@+id/view_performance" />
+        android:layout_alignBottom="@+id/view_performance"
+        android:layout_below="@+id/toolbar" />
 
     <include
         android:id="@+id/RemarkView"
         layout="@layout/set_remarks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="invisible"        />
+        android:visibility="invisible"
+        android:layout_below="@+id/toolbar" />
 
     <include
         android:id="@+id/view_performance"
@@ -32,7 +34,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
-        layout="@layout/performance" />
+        layout="@layout/performance"
+        android:layout_below="@+id/toolbar" />
 
     <include
         android:id="@+id/view_remarks"
@@ -40,7 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
-        layout="@layout/view_remarks" />
+        layout="@layout/view_remarks"
+        android:layout_alignTop="@+id/view_change_password" />
 
 
     <TextView
@@ -76,7 +80,7 @@
 
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottomBar_mentor"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
@@ -92,7 +96,8 @@
         layout="@layout/change_password"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignBottom="@+id/view_performance" />
+        android:layout_alignBottom="@+id/view_performance"
+        android:layout_below="@+id/toolbar" />
 
 
 </RelativeLayout>

@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -470,6 +471,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 case R.id.tab_student_dashboard /*2131689762*/:
                     this.val$toolbar.setTitle((CharSequence) "DashBoard");
                     StudentHome.this.setAreaFor(R.id.student_dashboard);
+                    Log.d(TAG,"Setting area for dashBoard!");
                     StudentHome.this.setProfile();
                     StudentHome.this.getAttGraph(StudentHome.this.Attendance);
                 case R.id.tab_view_remarks /*2131689763*/:
@@ -880,9 +882,11 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         });
     }
     void getAggrGraph() {
-        String[] mentor_fields = arr[8].split("~");
+        String[] mentor_fields = arr[9].split("~");
+
         if (mentor_fields.length == 1)
             return;
+        Log.d(TAG,"This is mento_fields[6]"+mentor_fields[6]);
         String[] aggr = mentor_fields[7].split(",");
         DataPoint[] dp = new DataPoint[9];
         dp[0] = new DataPoint(0, 6);
@@ -1283,7 +1287,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 this.Student_Name = namePair[0];
                 this.Parent_Name = namePair[1];
                 length = namePair.length;
-                if (arr.length <= 2 || !namePair[2].substring(0, 1).equals("0")) {
+                if (namePair.length < 2 || !namePair[2].substring(0, 1).equals("0")) {
                     Log.d(this.TAG, "OTP = None");
                 } else {
                     Log.d(this.TAG, namePair[2].substring(0, 1));
@@ -1391,13 +1395,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             BottomBar bottomBar;
             setContentView(R.layout.student_homepage);
             this.test = (TextView) findViewById(R.id.mentorName);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
             toolbar.setTitle((CharSequence) "My Attendance");
-            toolbar.setTitleTextColor(Color.GREEN);
+            toolbar.setTitleTextColor(Color.GRAY);
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             if (this.from.equals(Event.LOGIN)) {
                 navigationView.getMenu().getItem(0).setVisible(true);
@@ -1418,7 +1422,47 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_student);
                 bottomBar.setVisibility(View.VISIBLE);
             }
-            bottomBar.setOnTabSelectListener(new AnonymousClass21(toolbar));
+
+            bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+                @Override
+                public void onTabSelected(@IdRes int tabId) {
+                    switch (tabId) {
+                        case R.id.tab_student_dashboard /*2131689762*/:
+                            Log.d(TAG,"Setting area for dashBoard!");
+                            toolbar.setTitle((CharSequence) "DashBoard");
+                            StudentHome.this.setAreaFor(R.id.student_dashboard);
+                            StudentHome.this.setProfile();
+                            StudentHome.this.getAttGraph(StudentHome.this.Attendance);
+                            break;
+                        case R.id.tab_view_remarks /*2131689763*/:
+
+                            ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
+                            pd.setProgressStyle(1);
+                            StudentHome.this.getData();
+                            toolbar.setTitle((CharSequence) "Attendance & Remarks");
+                            StudentHome.this.setAreaFor(R.id.view_remarks);
+                            StudentHome.this.getRemarks();
+                            Log.d(StudentHome.this.TAG, "Button Clicked");
+                            pd.dismiss();
+                            break;
+                        case R.id.tab_performance /*2131689764*/:
+                            toolbar.setTitle((CharSequence) "Performance");
+                            StudentHome.this.setAreaFor(R.id.view_performance);
+                            StudentHome.this.showPerformance();
+                            StudentHome.this.showAcadValue();
+                            Log.d(StudentHome.this.TAG, "Button Clicked");
+                            break;
+                        case R.id.tab_set_remarks /*2131689765*/:
+                            toolbar.setTitle((CharSequence) "Set Remarks");
+                            StudentHome.this.setAreaFor(R.id.RemarkView);
+                            StudentHome.this.findViewById(R.id.RemarkView).setVisibility(View.VISIBLE);
+                            StudentHome.this.nav_SetRemark();
+                            Log.d(StudentHome.this.TAG, "Button Clicked");
+                            break;
+                        default:
+                    }
+                }
+            });
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     if (!StudentHome.this.from.equals(Event.LOGIN)) {

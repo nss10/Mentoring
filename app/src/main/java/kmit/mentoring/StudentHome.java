@@ -131,7 +131,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     String studentImage;
     String tempResult;
     TextView test;
-
+    static boolean testFlag;
     /* renamed from: kmit.mentoring.StudentHome.19 */
     class AnonymousClass19 implements OnCheckedChangeListener {
         final /* synthetic */ CheckBox val$cb;
@@ -716,6 +716,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         String [] Local_Dates,Local_Remarks;
         TextView RemUI = (TextView) findViewById(R.id.Remarks);
         RemUI.setText("");
+        RemUI.setVisibility(View.VISIBLE);
+        TextView RemHead = (TextView) findViewById(R.id.RemHead);
+        RemHead.setVisibility(View.VISIBLE);
         Log.d(TAG,local_rem+" This is the local_rem");
         if(local_rem!=null && local_date!=null)
         {
@@ -744,7 +747,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
                 String rem = getColoredSpanned(Remarks[i], "#0000FF");
                 String date= getColoredSpanned(Dates[i],"#080000");
-
                 RemUI.append(Html.fromHtml(date));
                 RemUI.append("\n");
                 RemUI.append(Html.fromHtml(rem));
@@ -754,9 +756,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         test.setText("Mentor: " + Mentor_Name + "\n");
 
 
-        RemUI.setVisibility(View.VISIBLE);
-        TextView RemHead = (TextView) findViewById(R.id.RemHead);
-        RemHead.setVisibility(View.VISIBLE);
+
     }
 
 
@@ -1390,6 +1390,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(this.TAG, "Reached in Student");
         super.onCreate(savedInstanceState);
+        testFlag=true;
         getData();
         if (this.tempResult != null && this.arr.length != 1) {
             BottomBar bottomBar;
@@ -1421,6 +1422,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 }
             } else {
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_student);
+                Log.d(TAG,"Reaching this line");
+                if(bottomBar!=null)
                 bottomBar.setVisibility(View.VISIBLE);
             }
 
@@ -1437,14 +1440,14 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                             break;
                         case R.id.tab_view_remarks /*2131689763*/:
 
-                            ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
-                            pd.setProgressStyle(1);
+                            /*ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
+                            pd.setProgressStyle(1);*/
                             StudentHome.this.getData();
                             toolbar.setTitle((CharSequence) "Attendance & Remarks");
                             StudentHome.this.setAreaFor(R.id.view_remarks);
                             StudentHome.this.getRemarks();
-                            Log.d(StudentHome.this.TAG, "Button Clicked");
-                            pd.dismiss();
+                            StudentHome.this.getRemarks();
+
                             break;
                         case R.id.tab_performance /*2131689764*/:
                             toolbar.setTitle((CharSequence) "Performance");

@@ -7,9 +7,9 @@
             android:icon="@drawable/std"
             android:title="MY STUDENTS" />
         <item
-            android:id="@+id/account"
+            android:id="@+id/change_password"
             android:icon="@drawable/admin"
-            android:title="ACCOUNT" />
+            android:title="Change Password" />
         <item
             android:id="@+id/logout"
             android:icon="@drawable/logout"

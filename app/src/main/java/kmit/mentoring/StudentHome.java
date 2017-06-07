@@ -1564,8 +1564,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         getData();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (id == R.id.Logout) {
-            ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START, true);
             Log.d(this.TAG, "hasInternet = " + this.hasInternet);
+            ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START, true);
             if (getLoginStatus() == null) {
                 this.hasInternet = false;
             } else {

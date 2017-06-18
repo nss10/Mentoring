@@ -39,7 +39,7 @@
     <ImageView
         android:id="@+id/item_is_submittable"
         android:paddingRight="5sp"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:src="@drawable/ic_star_black_24dp"

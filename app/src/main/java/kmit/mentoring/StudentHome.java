@@ -641,7 +641,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         ContentValues values = new ContentValues();
         values.put(mentorTable.column6, this.ratingBarResultString);
         values.put(mentorTable.column7, val);
-        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + this.sid + "'", null));
+        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + this.sid + "'", null)+this.ratingBarResultString + "isRatingSubmittable in LocalStruct " + this.isRatingSubmittable);
     }
 
     void nav_SetRemark() {

@@ -26,6 +26,7 @@ public class UpdateData {
         this.port = port;
         this.username = username;
         this.studentSem = studentSem;
+        Log.d(TAG,"studentSeminConstructor " + studentSem);
     }
 
     boolean UpdateToServer() {
@@ -49,26 +50,29 @@ public class UpdateData {
             rating = rating + c.getString(c.getColumnIndex(mentorTable.column6)) + "SPLITTER";
             isRatingSubmittable = isRatingSubmittable + c.getString(c.getColumnIndex(mentorTable.column7)) + "SPLITTER";
             isStudentFlagged = isStudentFlagged + c.getString(c.getColumnIndex(mentorTable.column8)) + "SPLITTER";
-            Log.d(this.TAG, "here we go " + isStudentFlagged + " " + c.getString(c.getColumnIndex(mentorTable.column8)));
+            Log.d(this.TAG, "here we go isRatingSubmittable - "+ sid +"-" + rating + "sem = " + studentSem);
         }
         mbgToInsertData kmit_mentoring_mbgToInsertData = new mbgToInsertData(this.context);
-        Log.d(this.TAG, remarks);
-        kmit_mentoring_mbgToInsertData.execute(new String[]{this.port, this.username, sid, remarks, date, rating, isRatingSubmittable, this.studentSem + BuildConfig.FLAVOR, isStudentFlagged});
+        Log.d(this.TAG, rating);
+        kmit_mentoring_mbgToInsertData.execute(new String[]{this.port, this.username, sid, remarks, date, rating, isRatingSubmittable, this.studentSem +"", isStudentFlagged});
         kmit_mentoring_mbgToInsertData.onProgressUpdate(new Void[0]);
-        Log.d(this.TAG, kmit_mentoring_mbgToInsertData.result);
+        Log.d(this.TAG,"printing Result - "+  kmit_mentoring_mbgToInsertData.result);
         if (kmit_mentoring_mbgToInsertData.result.matches("NO NET")) {
             Toast.makeText(this.context, "NO NET", Toast.LENGTH_LONG).show();
             return false;
         }
-        Toast.makeText(this.context, "Data Updated and logged out", 1).show();
+        Toast.makeText(this.context, "Data Updated and logged out", Toast.LENGTH_SHORT).show();
         return true;
     }
 
     String getCurMF(int sem, String[] mf) {
         String str = "";
         if (mf[0].length() < (sem * 2) - 1 || mf.length == 1) {
+            Log.d(TAG,"In the if");
             return "0~0~0~0~0~0~0~";
         }
+        Log.d(TAG,"In the else");
+
         for (int i = 0; i < 7; i++) {
             str = str + mf[i].charAt((sem - 1) * 2) + "~";
         }
@@ -90,9 +94,9 @@ public class UpdateData {
             values.put(mentorTable.column2, listData[1].split("&&")[0]);
             this.studentSem = Integer.parseInt(listData[2].split("&&")[1]);
             values.put(mentorTable.column3, studentStrings[i]);
-            Log.d(this.TAG, "isDataSubmittable = ");
             String temp = getCurMF(this.studentSem, listData[9].split("~"));
-            Log.d(this.TAG, "Sem =" + this.studentSem);
+            Log.d(this.TAG, "isDataSubmittable = "+temp+ " " +!temp.contains("0"));
+            Log.d(this.TAG, "Sem =" + this.studentSem +"-"+ listData[9]);
             values.put(mentorTable.column6, temp);
             if (temp.contains("0")) {
                 values.put(mentorTable.column7, "0");
@@ -102,6 +106,7 @@ public class UpdateData {
             values.put(mentorTable.column8, listData[5]);
             Log.d(this.TAG, "inserting " + listData[0] + "," + listData[1] + " , " + studentStrings[i] + "Current sem rating:" + getCurMF(this.studentSem, listData[9].split("~")) + " isStudentFlagged = " + listData[5]);
             this.db.insert(mentorTable.table_name, null, values);
+            Log.d(TAG,"****************");
         }
     }
 }

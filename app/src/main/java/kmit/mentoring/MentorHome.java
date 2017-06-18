@@ -196,8 +196,10 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         public void run() {
             Log.d(MentorHome.this.TAG, "gettingDataFromLocalAsync running...");
             MentorHome.this.getDataFromLocal();
-            MentorHome.this.editor.putInt("SEM", MentorHome.this.studentSem);
             MentorHome.this.editor.putString(MentorHome.this.getString(R.string.name_of_user), MentorHome.this.name);
+            MentorHome.this.editor.putInt("SEM", MentorHome.this.studentSem);
+            editor.commit();
+            Log.d(TAG,"SEMfromInnerClass" + studentSem);
             MentorHome.this.isDataUpdated = true;
             Handler UIOnCreateHandler = new Handler();
             UIOnCreateHandler.postDelayed(new C03791(UIOnCreateHandler), 2000);
@@ -226,6 +228,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         public void onClick(View v) {
             this.val$b.setClickable(false);
             this.val$b.setText("Data Updating...");
+            MentorHome.this.getDataFromLocal();
+            Log.d(TAG,"ButtonClicked -> UpdateToServer");
             MentorHome.this.UpdateToServer();
             MentorHome.this.getDataFromServer();
             MentorHome.this.UIonDataUpdate();
@@ -264,7 +268,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             h1.postDelayed(new C03781(h1), 0);
             return;
         }
-        Toast.makeText(getApplicationContext(), "Data cannot be Updated", 1).show();
+        Toast.makeText(getApplicationContext(), "Data cannot be Updated", Toast.LENGTH_SHORT).show();
         Button b = (Button) findViewById(R.id.UpdateToServer);
         b.setText("CLICK TO UPDATE TO SERVER");
         b.setClickable(true);
@@ -317,7 +321,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         this.username = sharedPreferences.getString(getString(R.string.user_name), EnvironmentCompat.MEDIA_UNKNOWN);
         setContentView(R.layout.mentor_homepage);
         Log.d(this.TAG, "Mentor created~" + savedInstanceState);
-        Log.d(this.TAG, "SEMpref=" + this.studentSem);
         if (this.loginStatus.matches("true")) {
             this.loading = ProgressDialog.show(this, "Obtaining data from server...", null, true, true);
             this.editor.putString(getString(R.string.just_logged_in), "false");
@@ -329,6 +332,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             this.name = sharedPreferences.getString(getString(R.string.name_of_user), this.name);
             this.studentSem = sharedPreferences.getInt("SEM", 0);
         }
+        Log.d(this.TAG, "SEMpref=" + this.studentSem);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.GRAY);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -343,6 +347,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         this.editor.commit();
         Bundle extras = getIntent().getExtras();
         if (extras != null && extras.containsKey("coming_from")) {
+
+            Log.d(TAG,"extras.containsKey(\"coming_from\") -> getDataFromServer");
             getDataFromServer();
             getIntent().removeExtra("coming_from");
             onCreate(null);
@@ -419,18 +425,23 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             String[] listData = studentStrings[i].split("<br>");
             this.studentSem = Integer.parseInt(listData[2].split("&&")[1]);
             Log.d(this.TAG, "loginStatus = " + this.loginStatus);
+            Log.d(this.TAG, "studentSem = " + studentSem + listData[2].split("&&")[1]);
+
             if (this.loginStatus.matches("true")) {
                 getImage(listData[0]);
             } else {
                 this.isLocalDataFilled = true;
             }
-            new UpdateData(this, getString(R.string.connection_string), this.username, this.studentSem).UpdateLocal(updateString);
+            new UpdateData(this, getString(R.string.connection_string), this.username, studentSem).UpdateLocal(updateString);
+
         }
     }
 
     void getDataFromLocal() {
         Log.d(this.TAG, "getDataFromLocal");
         if (this.loginStatus.matches("true")) {
+            Log.d(this.TAG, "getDataFromLocal->getDataFromServer");
+
             getDataFromServer();
         }
 
@@ -441,6 +452,9 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         CustomCursorAdapter custom_adapter = new CustomCursorAdapter(this, this.db.query(mentorTable.table_name, new String[]{"_id", mentorTable.column1, mentorTable.column2, mentorTable.column3, mentorTable.column4, mentorTable.column5, mentorTable.column6, mentorTable.column7, mentorTable.column8, mentorTable.column9}, null, null, null, null, "isStudentFlagged DESC"));
         this.stdlist = (ListView) findViewById(R.id.std_list2);
         this.stdlist.setAdapter(custom_adapter);
+
+        Cursor c2 = (Cursor) this.stdlist.getItemAtPosition(3);
+        Log.d(TAG,"IsRatingUpdatableFor" + c2.getString(c2.getColumnIndex(mentorTable.column1))+ " - " + c2.getString(c2.getColumnIndex(mentorTable.column7)));
         if (this.from_sid != null) {
             for (int position = 0; position < this.studentCount; position++) {
                 Cursor c = (Cursor) this.stdlist.getItemAtPosition(position);
@@ -511,6 +525,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
     void UpdateToServer() {
         String port = getString(R.string.connection_string);
         getDataFromLocal();
+        Log.d(TAG,"StudentSeminUpdatetosServer = "+ studentSem);
         this.isDataUpdated = new UpdateData(this, port, this.username, this.studentSem).UpdateToServer();
     }
 

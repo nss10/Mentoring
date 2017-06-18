@@ -38,6 +38,10 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
         String rating = params[5];
         String isRatingSubmittable = params[6];
         int studentSem=Integer.parseInt(params[7]);
+        Log.d(TAG,"studentSem" + studentSem);
+
+        String isStudentFlagged = params[8];
+
         try
         {
             Log.d(TAG,"started mentorHome");
@@ -54,9 +58,10 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
                     +URLEncoder.encode("remarks", "UTF-8")+"="+URLEncoder.encode(remarks, "UTF-8")+"&"
                     +URLEncoder.encode("date", "UTF-8")+"="+URLEncoder.encode(date, "UTF-8")+"&"
                     +URLEncoder.encode("rating", "UTF-8")+"="+URLEncoder.encode(rating, "UTF-8")+"&"
-                    +URLEncoder.encode("rating", "UTF-8")+"="+URLEncoder.encode(rating, "UTF-8")+"&"
                     +URLEncoder.encode("isRatingSubmittable", "UTF-8")+"="+URLEncoder.encode(isRatingSubmittable, "UTF-8")+"&"
-                    +URLEncoder.encode("studentSem", "UTF-8")+"="+URLEncoder.encode(studentSem+"", "UTF-8");
+                    +URLEncoder.encode("studentSem", "UTF-8")+"="+URLEncoder.encode(studentSem+"", "UTF-8")+"&"
+                    +URLEncoder.encode("isStudentFlagged", "UTF-8")+"="+URLEncoder.encode(isStudentFlagged+"", "UTF-8");
+
             Log.d(TAG,post_data);
             bufferedWriter.write(post_data);
             bufferedWriter.flush();

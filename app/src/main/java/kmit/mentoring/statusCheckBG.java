@@ -62,19 +62,15 @@ public class statusCheckBG extends AsyncTask<String, Void, String> {
                 }
             }
         } catch (MalformedURLException e) {
-            Log.d(this.TAG, "into catch1" + e);
-            Log.d(this.TAG, "finally: " + this.result);
-            return this.result;
+            Log.d(this.TAG, "into MalformedURLException" + e);
+
         } catch (IOException e2) {
-            Log.d(this.TAG, "into catch2:" + e2);
+            Log.d(this.TAG, "into IOException:" + e2);
             this.result = "NO NET";
-            Log.d(this.TAG, "finally: " + this.result);
-            return this.result;
         } catch (Exception e3) {
             Log.d(this.TAG, "into catchException:" + e3);
-            Log.d(this.TAG, "finally: " + this.result);
-            return this.result;
-        } catch (Throwable th) {
+        }
+        finally {
             Log.d(this.TAG, "finally: " + this.result);
             return this.result;
         }

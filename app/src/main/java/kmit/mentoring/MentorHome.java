@@ -50,7 +50,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
     ListView Flaggedstdlist;
     String TAG;
     String allStudentString;
-    int cur_sidCount;
+    static int cur_sidCount;
     SQLiteDatabase db;
     localDB db_obj;
     Editor editor;
@@ -71,24 +71,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
     int studentSem;
     Toolbar toolbar;
     String username;
+    final String mPort;
 
-    /* renamed from: kmit.mentoring.MentorHome.1 */
-    class C03781 implements Runnable {
-        final /* synthetic */ Handler val$h1;
-
-        C03781(Handler handler) {
-            this.val$h1 = handler;
-        }
-
-        public void run() {
-            if (MentorHome.this.isLocalDataFilled) {
-                MentorHome.this.onCreate(null);
-                Toast.makeText(MentorHome.this.getApplicationContext(), "Data Updated",Toast.LENGTH_LONG).show();
-                return;
-            }
-            this.val$h1.postDelayed(this, 100);
-        }
-    }
 
     /* renamed from: kmit.mentoring.MentorHome.1GetImage */
     class AnonymousClass1GetImage extends AsyncTask<String, Void, Bitmap> {
@@ -169,237 +153,32 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         }
     }
 
-    /* renamed from: kmit.mentoring.MentorHome.2 */
-    class C03802 implements Runnable {
-
-        /* renamed from: kmit.mentoring.MentorHome.2.1 */
-        class C03791 implements Runnable {
-            final /* synthetic */ Handler val$UIOnCreateHandler;
-
-            C03791(Handler handler) {
-                this.val$UIOnCreateHandler = handler;
-            }
-
-            public void run() {
-                Log.d(MentorHome.this.TAG, "isDataUpdated" + MentorHome.this.isDataUpdated);
-                if (MentorHome.this.isDataUpdated) {
-                    MentorHome.this.UIonDataUpdate();
-                } else {
-                    this.val$UIOnCreateHandler.postDelayed(this, 1000);
-                }
-            }
-        }
-
-        C03802() {
-        }
-
-        public void run() {
-            Log.d(MentorHome.this.TAG, "gettingDataFromLocalAsync running...");
-            MentorHome.this.getDataFromLocal();
-            MentorHome.this.editor.putString(MentorHome.this.getString(R.string.name_of_user), MentorHome.this.name);
-            MentorHome.this.editor.putInt("SEM", MentorHome.this.studentSem);
-            editor.commit();
-            Log.d(TAG,"SEMfromInnerClass" + studentSem);
-            MentorHome.this.isDataUpdated = true;
-            Handler UIOnCreateHandler = new Handler();
-            UIOnCreateHandler.postDelayed(new C03791(UIOnCreateHandler), 2000);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.MentorHome.3 */
-    class C03813 implements OnLayoutChangeListener {
-        C03813() {
-        }
-
-        public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-            MentorHome.this.navigationView.removeOnLayoutChangeListener(this);
-            ((TextView) MentorHome.this.navigationView.findViewById(R.id.login_name)).setText("Hello " + MentorHome.this.name);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.MentorHome.4 */
-    class C03824 implements OnClickListener {
-        final /* synthetic */ Button val$b;
-
-        C03824(Button button) {
-            this.val$b = button;
-        }
-
-        public void onClick(View v) {
-            this.val$b.setClickable(false);
-            this.val$b.setText("Data Updating...");
-            MentorHome.this.getDataFromLocal();
-            Log.d(TAG,"ButtonClicked -> UpdateToServer");
-            MentorHome.this.UpdateToServer();
-            MentorHome.this.getDataFromServer();
-            MentorHome.this.UIonDataUpdate();
-        }
-    }
-
-    /* renamed from: kmit.mentoring.MentorHome.5 */
-    class C03835 implements OnItemClickListener {
-        C03835() {
-        }
-
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            MentorHome.this.selectStudent((Cursor) parent.getAdapter().getItem(position), "fresh");
-        }
-    }
-
-    /* renamed from: kmit.mentoring.MentorHome.6 */
-    class C03846 implements OnClickListener {
-        C03846() {
-        }
-
-        public void onClick(View v) {
-            MentorHome.this.changePassword();
-        }
-    }
 
     public MentorHome() {
         this.TAG = "MentorHome";
         this.shouldRatingBeChanged = true;
+        mPort = MentorHome.this.getString(R.string.connection_string);
     }
 
-    void UIonDataUpdate() {
-        Handler h1 = new Handler();
-        Log.d(this.TAG, "isLocalDataFilled" + this.isLocalDataFilled);
-        if (this.isDataUpdated) {
-            h1.postDelayed(new C03781(h1), 0);
-            return;
-        }
-        Toast.makeText(getApplicationContext(), "Data cannot be Updated", Toast.LENGTH_SHORT).show();
-        Button b = (Button) findViewById(R.id.UpdateToServer);
-        b.setText("CLICK TO UPDATE TO SERVER");
-        b.setClickable(true);
-        if (this.loading != null) {
-            this.loading.dismiss();
-        }
-    }
 
-    String getLoginStatus() {
-        String port = getString(R.string.connection_string);
-        this.scbg = new statusCheckBG(this);
-        this.scbg.execute(new String[]{port, this.username});
-        this.scbg.onProgressUpdate(new Void[0]);
-        if (this.scbg.result.matches("NO NET")) {
-            Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        this.hasInternet = true;
-        return this.scbg.result;
-    }
+   //DataMethods
 
-    void onLogout(boolean shouldUpdate) {
-        if (shouldUpdate) {
-            UpdateToServer();
-        }
-        if (this.isDataUpdated || !shouldUpdate) {
-            Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
-            this.db.delete(mentorTable.table_name, null, null);
-            editor.remove("username");
-            editor.remove("login_status");
-            editor.commit();
-            LogoutBG lbg = new LogoutBG(this);
-            lbg.execute(new String[]{getString(R.string.connection_string), this.username});
-            lbg.onProgressUpdate(new Void[0]);
-            startActivity(new Intent(this, MainActivity.class));
-            return;
-        }
-        Toast.makeText(getApplicationContext(), "You need internet to logout", Toast.LENGTH_LONG).show();
-    }
-
-    public String getIMEI(Context context) {
-        return ((TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE)).getDeviceId();
-    }
-
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0);
-        this.editor = sharedPreferences.edit();
-        this.loginStatus = sharedPreferences.getString(getString(R.string.just_logged_in), EnvironmentCompat.MEDIA_UNKNOWN);
-        this.username = sharedPreferences.getString(getString(R.string.user_name), EnvironmentCompat.MEDIA_UNKNOWN);
-        setContentView(R.layout.mentor_homepage);
-        Log.d(this.TAG, "Mentor created~" + savedInstanceState);
-        if (this.loginStatus.matches("true")) {
-            this.loading = ProgressDialog.show(this, "Obtaining data from server...", null, true, true);
-            this.editor.putString(getString(R.string.just_logged_in), "false");
-            Log.d(this.TAG, "Getting data from Server");
-            new Handler().post(new C03802());
-        } else {
-            getDataFromLocal();
-            Log.d(this.TAG, "Getting Name from server and is " + this.name);
-            this.name = sharedPreferences.getString(getString(R.string.name_of_user), this.name);
-            this.studentSem = sharedPreferences.getInt("SEM", 0);
-        }
-        Log.d(this.TAG, "SEMpref=" + this.studentSem);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(Color.GRAY);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-        toolbar.setTitle((CharSequence) "MY STUDENTS");
-        this.navigationView = (NavigationView) findViewById(R.id.nav_view);
-        this.navigationView.setNavigationItemSelectedListener(this);
-        this.editor.putString(getString(R.string.name_of_user), this.name);
-        this.navigationView.addOnLayoutChangeListener(new C03813());
-        this.editor.commit();
-        Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey("coming_from")) {
-
-            Log.d(TAG,"extras.containsKey(\"coming_from\") -> getDataFromServer");
-            getDataFromServer();
-            getIntent().removeExtra("coming_from");
-            onCreate(null);
-        } else if (!this.loginStatus.matches("true")) {
-            sharedPreferences = getApplicationContext().getSharedPreferences("from_student", 0);
-            this.editor = sharedPreferences.edit();
-            this.from_sid = sharedPreferences.getString("from_sid", EnvironmentCompat.MEDIA_UNKNOWN);
-            Log.d(this.TAG, "Coming From " + this.from_sid);
-            this.editor.remove("from_sid");
-            this.editor.apply();
-            getDataFromLocal();
-        }
-        Button b = (Button) findViewById(R.id.UpdateToServer);
-        b.setHovered(true);
-        b.setOnClickListener(new C03824(b));
-        if (this.hasInternet) {
-            if (getLoginStatus().indexOf(getIMEI(this)) < 0) {
-                Log.d(this.TAG, "loginStatus " + this.loginStatus);
-                Toast.makeText(this, "You are logged out from " + this.username, 1).show();
-                onLogout(false);
-            }
-        }
-    }
-
-    public static String encodeTobase64(Bitmap image) {
-        Bitmap immagex = image;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immagex.compress(CompressFormat.PNG, 100, baos);
-        return Base64.encodeToString(baos.toByteArray(), 0);
-    }
-
-    private void getImage(String sid) {
-        new AnonymousClass1GetImage(sid).execute(new String[]{sid});
-    }
-
+    //Retrievers
     void getDataFromServer() {
         Log.d(this.TAG, "GetDataFromServer");
         mentorBackground mbg = new mentorBackground(this);
         String port = getString(R.string.connection_string);
-        mbg.execute(new String[]{this.username, port});
-        mbg.onProgressUpdate(new Void[0]);
+        mbg.execute(username, port);
+        mbg.onProgressUpdate();
         Log.d(this.TAG, "indexOfEOF :<" + mbg.result + ">");
         while (mbg.result.indexOf("E.O.F") < 0) {
             Log.d(this.TAG, "result :<" + this.result + ">");
             if (mbg.result.matches("NO NET")) {
+                Toast.makeText(this, "NO NET", Toast.LENGTH_SHORT).show();
                 break;
             }
         }
-        if (mbg.result.matches("NO NET")) {
-            Toast.makeText(this, "NO NET", Toast.LENGTH_SHORT).show();
-        }
+
         this.result = mbg.result.split("#");
         Log.d(this.TAG, mbg.result);
         if (!mbg.result.matches("NO NET")) {
@@ -410,30 +189,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             this.allStudentString = this.result[1];
             Log.d(this.TAG, "result[1] = " + this.result[1]);
             UpdateLocal(this.allStudentString);
-        }
-    }
-
-    void UpdateLocal(String updateString) {
-
-        this.db_obj = new localStruct().new localDB(getApplicationContext());
-        this.db = this.db_obj.getWritableDatabase();
-        this.db.delete(mentorTable.table_name, null, null);
-        ContentValues values = new ContentValues();
-        String[] studentStrings = updateString.split("STUDENT SEPERATOR SPLIT");
-        this.studentCount = studentStrings.length;
-        for (int i = 0; i < this.studentCount; i++) {
-            String[] listData = studentStrings[i].split("<br>");
-            this.studentSem = Integer.parseInt(listData[2].split("&&")[1]);
-            Log.d(this.TAG, "loginStatus = " + this.loginStatus);
-            Log.d(this.TAG, "studentSem = " + studentSem + listData[2].split("&&")[1]);
-
-            if (this.loginStatus.matches("true")) {
-                getImage(listData[0]);
-            } else {
-                this.isLocalDataFilled = true;
-            }
-            new UpdateData(this, getString(R.string.connection_string), this.username, studentSem).UpdateLocal(updateString);
-
         }
     }
 
@@ -463,31 +218,110 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
                 }
             }
         }
-        this.stdlist.setOnItemClickListener(new C03835());
+        this.stdlist.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MentorHome.this.selectStudent((Cursor) parent.getAdapter().getItem(position), "fresh");
+
+            }
+        });
     }
 
-    void changePassword() {
-        EditText et_cur_pwd = (EditText) findViewById(R.id.cur_pwd);
-        EditText et_new_pwd = (EditText) findViewById(R.id.new_pwd);
-        EditText et_confirm_new_pwd = (EditText) findViewById(R.id.confirm_new_pwd);
-        Button change_pwd = (Button) findViewById(R.id.button_change_password);
-        String cur_pwd = et_cur_pwd.getText().toString().trim();
-        if (et_new_pwd.getText().toString().trim().equals(et_confirm_new_pwd.getText().toString().trim())) {
-            String new_pwd = et_new_pwd.getText().toString().trim();
-            setPasswordBG spbg = new setPasswordBG(this);
-            String port = getString(R.string.connection_string);
-            Log.d(this.TAG, spbg.getStatus() + "before");
-            spbg.execute(port, this.username, cur_pwd, new_pwd);
-            Log.d(this.TAG, spbg.getStatus() + "after1");
-            spbg.onProgressUpdate(new Void[0]);
-        } else {
-            Toast.makeText(this, "Passwords did not match", Toast.LENGTH_SHORT).show();
+    //Updaters
+    void UpdateToServer() {
+        String port = getString(R.string.connection_string);
+        getDataFromLocal();
+        Log.d(TAG,"StudentSeminUpdatetosServer = "+ studentSem);
+        this.isDataUpdated = new UpdateData(this, port, this.username, this.studentSem).UpdateToServer();
+    }
+
+    void UpdateLocal(String updateString) {
+
+        this.db_obj = new localStruct().new localDB(getApplicationContext());
+        this.db = this.db_obj.getWritableDatabase();
+        this.db.delete(mentorTable.table_name, null, null);
+        ContentValues values = new ContentValues();
+        String[] studentStrings = updateString.split("STUDENT SEPERATOR SPLIT");
+        this.studentCount = studentStrings.length;
+        for (int i = 0; i < this.studentCount; i++) {
+            String[] listData = studentStrings[i].split("<br>");
+            this.studentSem = Integer.parseInt(listData[2].split("&&")[1]);
+            Log.d(this.TAG, "loginStatus = " + this.loginStatus);
+            Log.d(this.TAG, "studentSem = " + studentSem + listData[2].split("&&")[1]);
+
+            if (this.loginStatus.matches("true")) {
+                getImage(listData[0]);
+            } else {
+                this.isLocalDataFilled = true;
+            }
+            new UpdateData(this, mPort, this.username, studentSem).UpdateLocal(updateString);
+
         }
-        et_cur_pwd.setText(BuildConfig.FLAVOR);
-        et_new_pwd.setText(BuildConfig.FLAVOR);
-        et_confirm_new_pwd.setText(BuildConfig.FLAVOR);
     }
 
+
+
+    //Image Related methods
+    private void getImage(String sid) {
+        new AnonymousClass1GetImage(sid).execute(MentorHome.this.getString(R.string.connection_string),sid);
+    }
+
+    public static String encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(CompressFormat.PNG, 100, baos);
+        return Base64.encodeToString(baos.toByteArray(), 0);
+    }
+
+
+
+    //State getters
+
+    String getLoginStatus() {
+        String port = getString(R.string.connection_string);
+        this.scbg = new statusCheckBG(this);
+        this.scbg.execute(port, this.username);
+        this.scbg.onProgressUpdate();
+        if (this.scbg.result.matches("NO NET")) {
+            Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        this.hasInternet = true;
+        return this.scbg.result;
+    }
+
+    public String getIMEI(Context context) {
+        return ((TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE)).getDeviceId();
+    }
+
+
+
+    //Other methods
+    void UIonDataUpdate() {
+        final Handler h1 = new Handler();
+        Log.d(this.TAG, "isLocalDataFilled" + this.isLocalDataFilled);
+        if (this.isDataUpdated) {
+            h1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (isLocalDataFilled) {
+                        onCreate(null);
+                        Toast.makeText(MentorHome.this.getApplicationContext(), "Data Updated",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    h1.postDelayed(this, 100);
+                }
+            }, 2000);
+            return;
+        }
+        Toast.makeText(getApplicationContext(), "Data cannot be Updated", Toast.LENGTH_SHORT).show();
+        Button b = (Button) findViewById(R.id.UpdateToServer);
+        b.setText("CLICK TO UPDATE TO SERVER");
+        b.setClickable(true);
+        if (this.loading != null) {
+            this.loading.dismiss();
+        }
+    }
 
     void selectStudent(Cursor c, String state) {
         String sid = c.getString(c.getColumnIndex(mentorTable.column1));
@@ -522,11 +356,134 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         Log.d(this.TAG, "Creating intent for sid = " + sid);
     }
 
-    void UpdateToServer() {
-        String port = getString(R.string.connection_string);
-        getDataFromLocal();
-        Log.d(TAG,"StudentSeminUpdatetosServer = "+ studentSem);
-        this.isDataUpdated = new UpdateData(this, port, this.username, this.studentSem).UpdateToServer();
+    void changePassword() {
+        EditText et_cur_pwd = (EditText) findViewById(R.id.cur_pwd);
+        EditText et_new_pwd = (EditText) findViewById(R.id.new_pwd);
+        EditText et_confirm_new_pwd = (EditText) findViewById(R.id.confirm_new_pwd);
+        Button change_pwd = (Button) findViewById(R.id.button_change_password);
+        String cur_pwd = et_cur_pwd.getText().toString().trim();
+        if (et_new_pwd.getText().toString().trim().equals(et_confirm_new_pwd.getText().toString().trim())) {
+            String new_pwd = et_new_pwd.getText().toString().trim();
+            setPasswordBG spbg = new setPasswordBG(this);
+            String port = getString(R.string.connection_string);
+            Log.d(this.TAG, spbg.getStatus() + "before");
+            spbg.execute(port, this.username, cur_pwd, new_pwd);
+            Log.d(this.TAG, spbg.getStatus() + "after1");
+            spbg.onProgressUpdate(new Void[0]);
+        } else {
+            Toast.makeText(this, "Passwords did not match", Toast.LENGTH_SHORT).show();
+        }
+        et_cur_pwd.setText(BuildConfig.FLAVOR);
+        et_new_pwd.setText(BuildConfig.FLAVOR);
+        et_confirm_new_pwd.setText(BuildConfig.FLAVOR);
+    }
+
+
+
+    //Events and actions
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0);
+        this.editor = sharedPreferences.edit();
+        this.loginStatus = sharedPreferences.getString(getString(R.string.just_logged_in), "null");
+        this.username = sharedPreferences.getString(getString(R.string.user_name), "null");
+        setContentView(R.layout.mentor_homepage);
+
+        Log.d(this.TAG, "Mentor created~" + savedInstanceState);
+
+        //This is a one time operation happens during log-in
+        if (this.loginStatus.matches("true")) {
+            this.loading = ProgressDialog.show(this, "Obtaining data from server...", null, true, true);
+            this.editor.putString(getString(R.string.just_logged_in), "false");
+            Log.d(this.TAG, "Getting data from Server");
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(MentorHome.this.TAG, "gettingDataFromLocalAsync running...");
+                    MentorHome.this.getDataFromLocal();
+                    MentorHome.this.editor.putString(MentorHome.this.getString(R.string.name_of_user), MentorHome.this.name);
+                    MentorHome.this.editor.putInt("SEM", MentorHome.this.studentSem);
+                    editor.commit();
+                    Log.d(TAG,"SEMfromInnerClass" + studentSem);
+                    MentorHome.this.isDataUpdated = true;
+                    final Handler UIOnCreateHandler = new Handler();
+                    UIOnCreateHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(MentorHome.this.TAG, "isDataUpdated" + MentorHome.this.isDataUpdated);
+                            if (MentorHome.this.isDataUpdated) {
+                                MentorHome.this.UIonDataUpdate();
+                            } else {
+                                UIOnCreateHandler.postDelayed(this, 1000);
+                            }
+                        }
+                    }, 2000);
+                }
+            });
+        } else {
+            getDataFromLocal();
+            Log.d(this.TAG, "Getting Name from server and is " + this.name);
+            this.name = sharedPreferences.getString(getString(R.string.name_of_user), this.name);
+            this.studentSem = sharedPreferences.getInt("SEM", 0);
+        }
+        Log.d(this.TAG, "SEMpref=" + this.studentSem);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(Color.GRAY);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        toolbar.setTitle((CharSequence) "MY STUDENTS");
+        this.navigationView = (NavigationView) findViewById(R.id.nav_view);
+        this.navigationView.setNavigationItemSelectedListener(this);
+        this.editor.putString(getString(R.string.name_of_user), this.name);
+        this.navigationView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                MentorHome.this.navigationView.removeOnLayoutChangeListener(this);
+                ((TextView) MentorHome.this.navigationView.findViewById(R.id.login_name)).setText("Hello " + MentorHome.this.name);
+            }
+        });
+        this.editor.commit();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.containsKey("coming_from")) {
+
+            Log.d(TAG,"extras.containsKey(\"coming_from\") -> getDataFromServer");
+            getDataFromServer();
+            getIntent().removeExtra("coming_from");
+            onCreate(null);
+        } else if (!this.loginStatus.matches("true")) {
+            sharedPreferences = getApplicationContext().getSharedPreferences("from_student", 0);
+            this.editor = sharedPreferences.edit();
+            this.from_sid = sharedPreferences.getString("from_sid", EnvironmentCompat.MEDIA_UNKNOWN);
+            Log.d(this.TAG, "Coming From " + this.from_sid);
+            this.editor.remove("from_sid");
+            this.editor.apply();
+            getDataFromLocal();
+        }
+        final Button b = (Button) findViewById(R.id.UpdateToServer);
+        b.setHovered(true);
+        b.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                b.setClickable(false);
+                b.setText("Data Updating...");
+                MentorHome.this.getDataFromLocal();
+                Log.d(TAG,"ButtonClicked -> UpdateToServer");
+                MentorHome.this.UpdateToServer();
+                MentorHome.this.getDataFromServer();
+                MentorHome.this.UIonDataUpdate();
+            }
+        });
+        if (this.hasInternet) {
+            if (getLoginStatus().indexOf(getIMEI(this)) < 0) {
+                Log.d(this.TAG, "loginStatus " + this.loginStatus);
+                Toast.makeText(this, "You are logged out from " + this.username, Toast.LENGTH_LONG).show();
+                onLogout(false);
+            }
+        }
     }
 
     public void onBackPressed() {
@@ -558,7 +515,12 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
                 view_change_password.setVisibility(View.VISIBLE);
                 ((Button) findViewById(R.id.UpdateToServer)).setVisibility(View.INVISIBLE);
                 ((TableRow) findViewById(R.id.indicatorRow)).setVisibility(View.INVISIBLE);
-                ((Button) findViewById(R.id.button_change_password)).setOnClickListener(new C03846());
+                ((Button) findViewById(R.id.button_change_password)).setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MentorHome.this.changePassword();
+                    }
+                });
                 break;
             case R.id.logout /*2131689772*/:
                 onLogout(true);
@@ -576,5 +538,24 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             ((TableRow) findViewById(R.id.indicatorRow)).setVisibility(View.VISIBLE);
             this.navigationView.getMenu().getItem(0).setChecked(true);
         }
+    }
+
+    void onLogout(boolean shouldUpdate) {
+        if (shouldUpdate) {
+            UpdateToServer();
+        }
+        if (this.isDataUpdated || !shouldUpdate) {
+            Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
+            this.db.delete(mentorTable.table_name, null, null);
+            editor.remove("username");
+            editor.remove("login_status");
+            editor.commit();
+            LogoutBG lbg = new LogoutBG(this);
+            lbg.execute(new String[]{getString(R.string.connection_string), this.username});
+            lbg.onProgressUpdate(new Void[0]);
+            startActivity(new Intent(this, MainActivity.class));
+            return;
+        }
+        Toast.makeText(getApplicationContext(), "You need internet to logout", Toast.LENGTH_LONG).show();
     }
 }

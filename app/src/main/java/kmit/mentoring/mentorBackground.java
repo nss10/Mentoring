@@ -50,6 +50,7 @@ public class mentorBackground extends AsyncTask<String,Void,String>{
             outputStream.close();
             InputStream inputStream=m_httpURLConnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
+            Log.d(TAG,post_data);
             result="";
             String line="";
             while((line=bufferedReader.readLine())!=null)

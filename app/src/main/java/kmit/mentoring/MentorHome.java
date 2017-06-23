@@ -43,6 +43,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+
 import kmit.mentoring.localStruct.localDB;
 import kmit.mentoring.localStruct.mentorTable;
 
@@ -71,6 +73,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
     int studentSem;
     Toolbar toolbar;
     String username;
+    Student studArr[];
     String mPort;
 
 
@@ -192,8 +195,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         this.stdlist = (ListView) findViewById(R.id.std_list2);
         this.stdlist.setAdapter(custom_adapter);
 
-        Cursor c2 = (Cursor) this.stdlist.getItemAtPosition(3);
-        Log.d(TAG,"IsRatingUpdatableFor" + c2.getString(c2.getColumnIndex(mentorTable.column1))+ " - " + c2.getString(c2.getColumnIndex(mentorTable.column7)));
+        /*Cursor c2 = (Cursor) this.stdlist.getItemAtPosition(3);
+        Log.d(TAG,"IsRatingUpdatableFor" + c2.getString(c2.getColumnIndex(mentorTable.column1))+ " - " + c2.getString(c2.getColumnIndex(mentorTable.column7)));*/
         if (this.from_sid != null) {
             for (int position = 0; position < this.studentCount; position++) {
                 Cursor c = (Cursor) this.stdlist.getItemAtPosition(position);
@@ -244,20 +247,23 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         ContentValues values = new ContentValues();
         String[] studentStrings = updateString.split("STUDENT SEPERATOR SPLIT");
         this.studentCount = studentStrings.length;
+        studArr = new Student[studentCount];
         for (int i = 0; i < this.studentCount; i++) {
+            studArr[i]  = new Student(studentStrings[i]);
             String[] listData = studentStrings[i].split("<br>");
-            this.studentSem = Integer.parseInt(listData[2].split("&&")[1]);
+            this.studentSem = studArr[i].getSem();
             Log.d(this.TAG, "loginStatus = " + this.loginStatus);
-            Log.d(this.TAG, "studentSem = " + studentSem + listData[2].split("&&")[1]);
+            Log.d(this.TAG, "studentSem = " + studentSem);
 
             if (this.loginStatus.matches("true")) {
-                getImage(listData[0]);
+                getImage(studArr[i].getSid());
             } else {
                 this.isLocalDataFilled = true;
             }
-            new UpdateData(this, getString(R.string.connection_string), this.username, studentSem).UpdateLocal(updateString);
-
+//            new UpdateData(this, getString(R.string.connection_string), this.username, studentSem).UpdateLocal(updateString);
         }
+        new UpdateData(this, getString(R.string.connection_string), this.username, studentSem).UpdateLocal2(studArr);
+
     }
 
     void UpdateToServer() {
@@ -281,6 +287,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         this.hasInternet = true;
         return this.scbg.result;
     }
+
 
     public String getIMEI(Context context) {
         return ((TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE)).getDeviceId();
@@ -345,7 +352,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         String isRatingSubmittable = c.getString(c.getColumnIndex(mentorTable.column7));
         String isStudentFlagged = c.getString(c.getColumnIndex(mentorTable.column8));
         String studentImage = c.getString(c.getColumnIndex(mentorTable.column9));
-        Log.d(this.TAG, "sid = " + sid);
+        Log.d(this.TAG, "sid = " + sid + " isStudentFlagged = " + isStudentFlagged);
+
         if (isStudentFlagged == null) {
             isStudentFlagged = "0";
         }
@@ -353,6 +361,11 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             ratingBarResultString = "0~0~0~0~0~0~0~";
         }
         Intent i = new Intent(getApplicationContext(), StudentHome.class);
+        Log.d("Rajni",new_rem+" " + new_date);
+        Student student = new Student(res_str);
+        student.setStudentFlagged(isStudentFlagged.equals("1"));
+        student.setLocalRemarks(new_rem,new_date);
+        i.putExtra("studObj",student);
         i.putExtra("sid", sid);
         i.putExtra("mentor_id", this.username);
         i.putExtra("state", state);

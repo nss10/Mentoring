@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.List;
+
 import kmit.mentoring.localStruct.localDB;
 import kmit.mentoring.localStruct.mentorTable;
 
@@ -79,24 +83,63 @@ public class UpdateData {
         return str;
     }
 
+
+    void UpdateLocal2(Student[] studArr)
+    {
+        this.db_obj = new localStruct().new localDB(this.context);
+        this.db = this.db_obj.getWritableDatabase();
+        this.db.delete(mentorTable.table_name, null, null);
+        ContentValues values = new ContentValues();
+
+        for(Student student : studArr)
+        {
+            Log.d(this.TAG, student.toString());
+
+            values.put(mentorTable.column1, student.getSid());
+            values.put(mentorTable.column2, student.getName());
+            this.studentSem = student.getSem();
+            values.put(mentorTable.column3, student.getInputString());
+            List<int[]> curMFlist = Arrays.asList(student.getCurMF());
+            values.put(mentorTable.column6, student.getCurMFString());
+            if (curMFlist.contains(0)) {
+                values.put(mentorTable.column7, "0");
+            } else {
+                values.put(mentorTable.column7, "1");
+            }
+            values.put(mentorTable.column8, student.isStudentFlagged()?"1":"0");
+            this.db.insert(mentorTable.table_name, null, values);
+            Log.d(TAG,"col1 " + student.getSid());
+            Log.d(TAG,"col2 " + student.getName());
+            Log.d(TAG,"col3 " + student.getInputString());
+            Log.d(TAG,"col6 " + student.getCurMFString());
+            Log.d(TAG,"col7 ");
+            Log.d(TAG,curMFlist.contains("0")?"0":"1");
+            Log.d(TAG,"col8 " + (student.isStudentFlagged()?"1":"0"));
+
+            Log.d(TAG,"****************");
+        }
+    }
     void UpdateLocal(String updateString) {
 
         this.db_obj = new localStruct().new localDB(this.context);
         this.db = this.db_obj.getWritableDatabase();
         this.db.delete(mentorTable.table_name, null, null);
         ContentValues values = new ContentValues();
+
         String[] studentStrings = updateString.split("STUDENT SEPERATOR SPLIT");
         this.studentCount = studentStrings.length;
         for (int i = 0; i < this.studentCount; i++) {
-            Log.d(this.TAG, "studentString[" + i + "]" + studentStrings[i]);
+//            Log.d(this.TAG, "studentString[" + i + "]" + studentStrings[i]);
             String[] listData = studentStrings[i].split("<br>");
             values.put(mentorTable.column1, listData[0]);
+
+
             values.put(mentorTable.column2, listData[1].split("&&")[0]);
             this.studentSem = Integer.parseInt(listData[2].split("&&")[1]);
             values.put(mentorTable.column3, studentStrings[i]);
             String temp = getCurMF(this.studentSem, listData[9].split("~"));
-            Log.d(this.TAG, "isDataSubmittable = "+temp+ " " +!temp.contains("0"));
-            Log.d(this.TAG, "Sem =" + this.studentSem +"-"+ listData[9]);
+//            Log.d(this.TAG, "isDataSubmittable = "+temp+ " " +!temp.contains("0"));
+//            Log.d(this.TAG, "Sem =" + this.studentSem +"-"+ listData[9]);
             values.put(mentorTable.column6, temp);
             if (temp.contains("0")) {
                 values.put(mentorTable.column7, "0");
@@ -104,8 +147,16 @@ public class UpdateData {
                 values.put(mentorTable.column7, "1");
             }
             values.put(mentorTable.column8, listData[5]);
-            Log.d(this.TAG, "inserting " + listData[0] + "," + listData[1] + " , " + studentStrings[i] + "Current sem rating:" + getCurMF(this.studentSem, listData[9].split("~")) + " isStudentFlagged = " + listData[5]);
+//            Log.d(this.TAG, "inserting " + listData[0] + "," + listData[1] + " , " + studentStrings[i] + "Current sem rating:" + getCurMF(this.studentSem, listData[9].split("~")) + " isStudentFlagged = " + listData[5]);
             this.db.insert(mentorTable.table_name, null, values);
+            Log.d(TAG,"col1" + listData[0]);
+            Log.d(TAG,"col2" + listData[1].split("&&")[0]);
+            Log.d(TAG,"col3" + studentStrings[i]);
+            Log.d(TAG,"col6" + temp);
+            Log.d(TAG,"col7");
+            Log.d(TAG,temp.contains("0")?"0":"1");
+            Log.d(TAG,"col8" + listData[5]);
+
             Log.d(TAG,"****************");
         }
     }

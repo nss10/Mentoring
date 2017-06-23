@@ -83,6 +83,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import kmit.mentoring.localStruct.localDB;
 import kmit.mentoring.localStruct.mentorTable;
@@ -130,416 +131,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     String state;
     String studentImage;
     String tempResult;
+    TextView mentorNameTV;
     TextView test;
     static boolean testFlag;
-    /* renamed from: kmit.mentoring.StudentHome.19 */
-    class AnonymousClass19 implements OnCheckedChangeListener {
-        final /* synthetic */ CheckBox val$cb;
+    Student student;
+    String mPort;
 
-        AnonymousClass19(CheckBox checkBox) {
-            this.val$cb = checkBox;
-        }
 
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Log.d(StudentHome.this.TAG, "isStudentFlagged = " + this.val$cb.isChecked());
-            StudentHome.this.isStudentFlagged = this.val$cb.isChecked();
-            StudentHome studentHome = StudentHome.this;
-            localStruct kmit_mentoring_localStruct = new localStruct();
-            kmit_mentoring_localStruct.getClass();
-            studentHome.db_obj = new localStruct().new localDB(StudentHome.this.getApplicationContext());
-            StudentHome.this.db = StudentHome.this.db_obj.getWritableDatabase();
-            String val = StudentHome.this.isStudentFlagged ? "1" : "0";
-            ContentValues values = new ContentValues();
-            values.put(mentorTable.column8, val);
-            Log.d(StudentHome.this.TAG, "db.update val = " + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + StudentHome.this.sid + "'", null));
-            Log.d(StudentHome.this.TAG, "isStudentFlagged is updated to the local as" + values);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.1 */
-    class C03991 implements OnClickListener {
-        final /* synthetic */ EditText val$et;
-        final /* synthetic */ InputMethodManager val$imm;
-
-        /* renamed from: kmit.mentoring.StudentHome.1.1 */
-        class C03971 implements DialogInterface.OnClickListener {
-            final /* synthetic */ String val$new_rem;
-
-            C03971(String str) {
-                this.val$new_rem = str;
-            }
-
-            public void onClick(DialogInterface dialog, int id) {
-                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                Date d = new Date();
-                Log.d(StudentHome.this.TAG, this.val$new_rem + " " + dateFormat.format(d));
-                ContentValues values = new ContentValues();
-                if (StudentHome.this.local_date == null || StudentHome.this.local_rem == null) {
-                    StudentHome.this.local_rem = this.val$new_rem.trim();
-                    StudentHome.this.local_date = dateFormat.format(d);
-                } else {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    StudentHome studentHome = StudentHome.this;
-                    studentHome.local_rem = stringBuilder.append(studentHome.local_rem).append("~").append(this.val$new_rem.trim()).toString();
-                    stringBuilder = new StringBuilder();
-                    studentHome = StudentHome.this;
-                    studentHome.local_date = stringBuilder.append(studentHome.local_date).append("~").append(dateFormat.format(d)).toString();
-                    Log.d(StudentHome.this.TAG, "Updated local_rem" + StudentHome.this.local_rem);
-                }
-                values.put(mentorTable.column4, StudentHome.this.local_rem);
-                values.put(mentorTable.column5, StudentHome.this.local_date);
-                StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + StudentHome.this.sid + "'", null);
-                Toast.makeText(StudentHome.this.getApplicationContext(), "Remark Entered", Toast.LENGTH_SHORT).show();
-                Log.d(StudentHome.this.TAG, this.val$new_rem + " " + dateFormat.format(d));
-                C03991.this.val$et.setText(BuildConfig.FLAVOR);
-            }
-        }
-
-        /* renamed from: kmit.mentoring.StudentHome.1.2 */
-        class C03982 implements DialogInterface.OnClickListener {
-            C03982() {
-            }
-
-            public void onClick(DialogInterface dialog, int id) {
-                if (C03991.this.val$imm != null) {
-                    C03991.this.val$imm.toggleSoftInput(1, 0);
-                }
-            }
-        }
-
-        C03991(EditText editText, InputMethodManager inputMethodManager) {
-            this.val$et = editText;
-            this.val$imm = inputMethodManager;
-        }
-
-        public void onClick(View v) {
-            String new_rem = this.val$et.getText().toString();
-            if (this.val$imm != null) {
-                this.val$imm.toggleSoftInput(1, 0);
-            }
-            if (new_rem.length() == 0) {
-                Toast.makeText(StudentHome.this, "Please Enter a remark to submit", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Builder builder = new Builder(StudentHome.this);
-            builder.setTitle("Are you sure you want to submit Remark?");
-            builder.setMessage(new_rem);
-            builder.setCancelable(false);
-            builder.setPositiveButton("Confirm", new C03971(new_rem));
-            builder.setNegativeButton("Edit", new C03982());
-            builder.create().show();
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.20 */
-    class AnonymousClass20 implements OnLayoutChangeListener {
-        final /* synthetic */ NavigationView val$navigationView;
-
-        AnonymousClass20(NavigationView navigationView) {
-            this.val$navigationView = navigationView;
-        }
-
-        public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-            this.val$navigationView.removeOnLayoutChangeListener(this);
-            TextView textView = (TextView) this.val$navigationView.findViewById(R.id.temp2);
-            if (StudentHome.this.from.equals(Event.LOGIN)) {
-                textView.setText("Hello " + StudentHome.this.Student_Name);
-            } else {
-                textView.setText("This is " + StudentHome.this.Student_Name);
-            }
-            textView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.25 */
-    class AnonymousClass25 implements DialogInterface.OnClickListener {
-        final /* synthetic */ LogoutBG val$lbg;
-        final /* synthetic */ String val$port;
-
-        AnonymousClass25(LogoutBG logoutBG, String str) {
-            this.val$lbg = logoutBG;
-            this.val$port = str;
-        }
-
-        public void onClick(DialogInterface dialog, int which) {
-            this.val$lbg.execute(new String[]{this.val$port, StudentHome.this.sid});
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.26 */
-    class AnonymousClass26 implements DialogInterface.OnClickListener {
-        final /* synthetic */ LogoutBG val$lbg;
-        final /* synthetic */ String val$port;
-
-        AnonymousClass26(LogoutBG logoutBG, String str) {
-            this.val$lbg = logoutBG;
-            this.val$port = str;
-        }
-
-        public void onClick(DialogInterface dialog, int which) {
-            this.val$lbg.execute(new String[]{this.val$port, StudentHome.this.sid, StudentHome.this.getIMEI(StudentHome.this)});
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.27 */
-    class AnonymousClass27 implements Runnable {
-        final /* synthetic */ Handler val$h1;
-        final /* synthetic */ LogoutBG val$lbg;
-
-        AnonymousClass27(LogoutBG logoutBG, Handler handler) {
-            this.val$lbg = logoutBG;
-            this.val$h1 = handler;
-        }
-
-        public void run() {
-            if (this.val$lbg.result == null || this.val$lbg.result.equals(BuildConfig.FLAVOR)) {
-                this.val$h1.postDelayed(this, 5);
-            } else if (this.val$lbg.result.equals("1")) {
-                StudentHome.this.onLogout();
-            } else {
-                Toast.makeText(StudentHome.this, "Unable to logout", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.2 */
-    class C04002 implements OnClickListener {
-        final /* synthetic */ EditText val$et;
-
-        C04002(EditText editText) {
-            this.val$et = editText;
-        }
-
-        public void onClick(View v) {
-            this.val$et.setText(BuildConfig.FLAVOR);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.3 */
-    class C04043 implements OnClickListener {
-
-        /* renamed from: kmit.mentoring.StudentHome.3.1 */
-        class C04011 implements DialogInterface.OnClickListener {
-            C04011() {
-            }
-
-            public void onClick(DialogInterface dialog, int id) {
-                Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
-                i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
-                i.putExtra("isRatingSubmittable", StudentHome.this.isRatingSubmittable + BuildConfig.FLAVOR);
-                i.putExtra("mode", "edit");
-                StudentHome.this.startActivityForResult(i, 2);
-            }
-        }
-
-        /* renamed from: kmit.mentoring.StudentHome.3.2 */
-        class C04022 implements DialogInterface.OnClickListener {
-            C04022() {
-            }
-
-            public void onClick(DialogInterface dialog, int id) {
-                Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
-                i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
-                i.putExtra("isRatingSubmittable", StudentHome.this.isRatingSubmittable + BuildConfig.FLAVOR);
-                i.putExtra("mode", "view");
-                StudentHome.this.startActivityForResult(i, 2);
-            }
-        }
-
-        /* renamed from: kmit.mentoring.StudentHome.3.3 */
-        class C04033 implements DialogInterface.OnClickListener {
-            C04033() {
-            }
-
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        }
-
-        C04043() {
-        }
-
-        public void onClick(View v) {
-            if (StudentHome.this.isRatingSubmittable) {
-                Builder builder = new Builder(StudentHome.this);
-                builder.setTitle("You have already Submitted this data before");
-                builder.setMessage("Do you want to resubmit?");
-                builder.setCancelable(false);
-                builder.setPositiveButton("Yes", new C04011());
-                builder.setNeutralButton("View", new C04022());
-                builder.setNegativeButton("Cancel", new C04033());
-                builder.create().show();
-                return;
-            }
-            Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-            Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
-            i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
-            i.putExtra("isRatingSubmittable", StudentHome.this.isRatingSubmittable + BuildConfig.FLAVOR);
-            i.putExtra("mode", "edit");
-            StudentHome.this.startActivityForResult(i, 2);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.4 */
-    class C04054 implements OnTouchListener {
-        final /* synthetic */ InputMethodManager val$imm;
-
-        C04054(InputMethodManager inputMethodManager) {
-            this.val$imm = inputMethodManager;
-        }
-
-        public boolean onTouch(View v, MotionEvent event) {
-            if (this.val$imm != null) {
-                this.val$imm.toggleSoftInput(1, 0);
-            }
-            return false;
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.5 */
-    class C04065 implements OnItemSelectedListener {
-        final /* synthetic */ InputMethodManager val$imm;
-        final /* synthetic */ Spinner val$sp;
-
-        C04065(InputMethodManager inputMethodManager, Spinner spinner) {
-            this.val$imm = inputMethodManager;
-            this.val$sp = spinner;
-        }
-
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
-            if (this.val$imm != null) {
-                this.val$imm.toggleSoftInput(1, 0);
-            }
-            if (((int) parent.getItemIdAtPosition(position)) > 1) {
-                this.val$sp.setSelection(1);
-                EditText et = (EditText) StudentHome.this.findViewById(R.id.RemarkText);
-                if (position == 8) {
-                    Toast.makeText(StudentHome.this, "Type the backlog subject name", Toast.LENGTH_SHORT).show();
-                }
-                if (et.getText().length() != 0) {
-                    et.setText(et.getText().toString().trim() + "," + ((String) parent.getItemAtPosition(position)) + " ");
-                } else {
-                    et.setText(((String) parent.getItemAtPosition(position)) + " ");
-                }
-                et.setSelection(et.getText().length());
-                if (this.val$imm != null && et.getText().toString().length() > 0) {
-                    this.val$imm.toggleSoftInput(1, 0);
-                }
-            }
-        }
-
-        public void onNothingSelected(AdapterView<?> adapterView) {
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.6 */
-    class C04076 implements Runnable {
-        final /* synthetic */ TextView val$AcadValue;
-        final /* synthetic */ Handler val$h;
-
-        C04076(TextView textView, Handler handler) {
-            this.val$AcadValue = textView;
-            this.val$h = handler;
-        }
-
-        public void run() {
-            if (((double) StudentHome.this.Acad_loader) < StudentHome.this.Academic_Aggregate) {
-                this.val$AcadValue.setText(StudentHome.this.Acad_loader +"");
-                StudentHome studentHome = StudentHome.this;
-                studentHome.Acad_loader += 3;
-                this.val$h.postDelayed(this, 3);
-                return;
-            }
-            this.val$AcadValue.setText(StudentHome.round(StudentHome.this.Academic_Aggregate, 2) +"");
-            StudentHome.this.Acad_loader = 0;
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.21 */
-    class AnonymousClass21 implements OnTabSelectListener {
-        final /* synthetic */ Toolbar val$toolbar;
-
-        AnonymousClass21(Toolbar toolbar) {
-            this.val$toolbar = toolbar;
-        }
-
-        public void onTabSelected(int tabId) {
-            switch (tabId) {
-                case R.id.tab_student_dashboard /*2131689762*/:
-                    this.val$toolbar.setTitle((CharSequence) "DashBoard");
-                    StudentHome.this.setAreaFor(R.id.student_dashboard);
-                    Log.d(TAG,"Setting area for dashBoard!");
-                    StudentHome.this.setProfile();
-                    StudentHome.this.getAttGraph(StudentHome.this.Attendance);
-                case R.id.tab_view_remarks /*2131689763*/:
-                    ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
-                    pd.setProgressStyle(1);
-                    StudentHome.this.getData();
-                    this.val$toolbar.setTitle((CharSequence) "Attendance & Remarks");
-                    StudentHome.this.setAreaFor(R.id.view_remarks);
-                    StudentHome.this.getRemarks();
-                    Log.d(StudentHome.this.TAG, "Button Clicked");
-                    pd.dismiss();
-                case R.id.tab_performance /*2131689764*/:
-                    this.val$toolbar.setTitle((CharSequence) "Performance");
-                    StudentHome.this.setAreaFor(R.id.view_performance);
-                    StudentHome.this.showPerformance();
-                    StudentHome.this.showAcadValue();
-                    Log.d(StudentHome.this.TAG, "Button Clicked");
-                case R.id.tab_set_remarks /*2131689765*/:
-                    this.val$toolbar.setTitle((CharSequence) "Set Remarks");
-                    StudentHome.this.setAreaFor(R.id.RemarkView);
-                    StudentHome.this.findViewById(R.id.RemarkView).setVisibility(View.VISIBLE);
-                    StudentHome.this.nav_SetRemark();
-                    Log.d(StudentHome.this.TAG, "Button Clicked");
-                default:
-            }
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.7 */
-    class C06107 implements LabelFormatter {
-        C06107() {
-        }
-
-        public String formatLabel(double value, boolean isValueX) {
-            return StudentHome.round(value, 2) + BuildConfig.FLAVOR;
-        }
-
-        public void setViewport(Viewport viewport) {
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.8 */
-    class C06118 implements OnDataPointTapListener {
-        C06118() {
-        }
-
-        public void onTap(Series series, DataPointInterface dataPoint) {
-            StudentHome.this.sp.setSelection(0);
-            ((TextView) StudentHome.this.findViewById(R.id.NoGraph)).setVisibility(View.INVISIBLE);
-            StudentHome.this.sp.setSelection(8);
-        }
-    }
-
-    /* renamed from: kmit.mentoring.StudentHome.9 */
-    class C06129 implements ValueDependentColor {
-        C06129() {
-        }
-
-        public int get(DataPointInterface data) {
-            if (data.getY() > 70.0d) {
-                return -16776961;
-            }
-            if (data.getY() > 65.0d) {
-                return Color.rgb(MotionEventCompat.ACTION_MASK, 100, 0);
-            }
-            return SupportMenu.CATEGORY_MASK;
-        }
-    }
 
     public StudentHome() {
         this.TAG = "StudentHome";
@@ -550,6 +148,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         this.defaultImage = true;
         this.justLoggedIn = true;
         this.hasInternet = true;
+
     }
 
     public static String encodeTobase64(Bitmap image) {
@@ -627,8 +226,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 2) {
             this.ratingBarResultString = data.getStringExtra("Rating String");
-            this.isRatingSubmittable = Boolean.parseBoolean(data.getStringExtra("isSubmittable"));
-            Log.d(this.TAG, "onActivityResult isRatingSubmittable: " + this.isRatingSubmittable);
+            student.setRatingSubmittable(Boolean.parseBoolean(data.getStringExtra("isSubmittable")));
+            Log.d(this.TAG, "onActivityResult isRatingSubmittable: " + student.isRatingSubmittable());
             updateRatingToLocal();
         }
     }
@@ -637,28 +236,172 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         this.db_obj = new localStruct().new localDB(getApplicationContext());
         this.db = this.db_obj.getWritableDatabase();
-        String val = this.isRatingSubmittable ? "1" : "0";
+        String val = student.isRatingSubmittable() ? "1" : "0";
         ContentValues values = new ContentValues();
         values.put(mentorTable.column6, this.ratingBarResultString);
         values.put(mentorTable.column7, val);
-        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + this.sid + "'", null)+this.ratingBarResultString + "isRatingSubmittable in LocalStruct " + this.isRatingSubmittable);
+        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + this.sid + "'", null)+this.ratingBarResultString + "isRatingSubmittable in LocalStruct " + student.isRatingSubmittable());
     }
 
     void nav_SetRemark() {
-        Spinner sp = (Spinner) findViewById(R.id.RemarkSpinner);
+        final Spinner sp = (Spinner) findViewById(R.id.RemarkSpinner);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.RemarkList, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
         Button submitRemark = (Button) findViewById(R.id.SubmitRemark);
         this.db_obj = new localStruct().new localDB(getApplicationContext());
         this.db = this.db_obj.getWritableDatabase();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        EditText et = (EditText) findViewById(R.id.RemarkText);
-        submitRemark.setOnClickListener(new C03991(et, imm));
-        ((Button) findViewById(R.id.ClearRemark)).setOnClickListener(new C04002(et));
-        ((Button) findViewById(R.id.submitMentorFields)).setOnClickListener(new C04043());
-        sp.setOnTouchListener(new C04054(imm));
-        sp.setOnItemSelectedListener(new C04065(imm, sp));
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        final EditText et = (EditText) findViewById(R.id.RemarkText);
+        submitRemark.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String new_rem = et.getText().toString().trim();
+                if (imm != null) {
+                    imm.toggleSoftInput(1, 0);
+                }
+                if (new_rem.length() == 0) {
+                    Toast.makeText(StudentHome.this, "Please Enter a remark to submit", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Builder builder = new Builder(StudentHome.this);
+                builder.setTitle("Are you sure you want to submit Remark?");
+                builder.setMessage(new_rem);
+                builder.setCancelable(false);
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                        String cur_date = dateFormat.format(new Date());
+                        Log.d(StudentHome.this.TAG, new_rem + " " + cur_date);
+                        ContentValues values = new ContentValues();
+
+                        if(student.getNew_remarkList()==null)
+                            student.setLocalRemarks(new_rem,cur_date);
+                        else
+                        {
+                            Log.d(TAG,"size = "+student.getNew_remarkList().size());
+                            student.setLocalRemarks(new_rem,cur_date);
+                            Log.d(TAG,"size = "+student.getNew_remarkList().size());
+                        }
+
+                        Remark cumulativeLocalRemark = student.getCumulativeLocalRemark();
+                        values.put(mentorTable.column4, cumulativeLocalRemark.getRemarkString());
+                        values.put(mentorTable.column5, cumulativeLocalRemark.getDate());
+                        Log.d(TAG,"" + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid()+ "'", null));
+
+
+
+                        Toast.makeText(StudentHome.this.getApplicationContext(), "Remark Entered", Toast.LENGTH_SHORT).show();
+                        Log.d(StudentHome.this.TAG, new_rem + " " + cur_date + " string = " + cumulativeLocalRemark.toString() + "values = " + values.toString());
+                        et.getText().clear();
+
+                    }
+                });
+                builder.setNegativeButton("Edit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (imm != null) {
+                            imm.toggleSoftInput(1, 0);
+                        }
+                    }
+                });
+                builder.create().show();
+            }
+        });
+        ((Button) findViewById(R.id.ClearRemark)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et.setText(BuildConfig.FLAVOR);
+            }
+        });
+        ((Button) findViewById(R.id.submitMentorFields)).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (student.isRatingSubmittable()) {
+                    Builder builder = new Builder(StudentHome.this);
+                    builder.setTitle("You have already Submitted this data before");
+                    builder.setMessage("Do you want to resubmit?");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
+                            Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
+                            i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
+                            i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
+                            i.putExtra("mode", "edit");
+                            StudentHome.this.startActivityForResult(i, 2);
+                        }
+                    });
+                    builder.setNeutralButton("View", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
+                            Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
+                            i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
+                            i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
+                            i.putExtra("mode", "view");
+                            StudentHome.this.startActivityForResult(i, 2);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.create().show();
+                    return;
+                }
+                Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
+                Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
+                i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
+                i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
+                i.putExtra("mode", "edit");
+                StudentHome.this.startActivityForResult(i, 2);
+            }
+        });
+        sp.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (imm != null) {
+                    imm.toggleSoftInput(1, 0);
+                }
+                return false;
+            }
+        });
+        sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
+                if (imm != null) {
+                    imm.toggleSoftInput(1, 0);
+                }
+                if (((int) parent.getItemIdAtPosition(position)) > 1) {
+                    sp.setSelection(1);
+                    EditText et = (EditText) StudentHome.this.findViewById(R.id.RemarkText);
+                    if (position == 8) {
+                        Toast.makeText(StudentHome.this, "Type the backlog subject name", Toast.LENGTH_SHORT).show();
+                    }
+                    if (et.getText().length() != 0) {
+                        et.setText(et.getText().toString().trim() + "," + ((String) parent.getItemAtPosition(position)) + " ");
+                    } else {
+                        et.setText(((String) parent.getItemAtPosition(position)) + " ");
+                    }
+                    et.setSelection(et.getText().length());
+                    if (imm != null && et.getText().toString().length() > 0) {
+                        imm.toggleSoftInput(1, 0);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     void changePassword() {
@@ -710,50 +453,49 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
     void getRemarks() {
 
+        Log.d(TAG,"student = "+student.toString());
 
-
-        StringBuilder server_data = new StringBuilder();
-        String [] Local_Dates,Local_Remarks;
         TextView RemUI = (TextView) findViewById(R.id.Remarks);
         RemUI.setText("");
         RemUI.setVisibility(View.VISIBLE);
         TextView RemHead = (TextView) findViewById(R.id.RemHead);
         RemHead.setVisibility(View.VISIBLE);
         Log.d(TAG,local_rem+" This is the local_rem");
-        if(local_rem!=null && local_date!=null)
+        if(student.getNew_remarkList()==null && student.getRemarkList()==null)
         {
-            Local_Dates =local_date.split("~");
-            Local_Remarks =local_rem.split("~");
-
-            for(int i=Local_Dates.length-1;i>=0;i--)
-            {
-                String rem = Local_Remarks[i];//getColoredSpanned(Local_Remarks[i], "#ff0000");
-                String date= getColoredSpanned(Local_Dates[i],"#080000");
-
-                RemUI.append(Html.fromHtml(date));
-                RemUI.append("\n");
-                RemUI.append(Html.fromHtml(rem));
-                RemUI.append("\n\n");
-            }
+            RemUI.setText("No Remarks");
+            return;
         }
-        if(Remarks[0].trim().equals("No")) {
-            if(local_rem==null && local_date==null)
-                RemUI.setText("No Remarks");
-        }
-        else{
-            Log.d(TAG,Remarks[0]+" Remarks[0]");
+        else
+        {
+            ArrayList<Remark> localRemList = student.getNew_remarkList();
+            ArrayList<Remark> serverRemList = student.getRemarkList();
+            Log.d(TAG,"localRemarksList = " + String.valueOf(localRemList!=null) + "serverRemarksList = " + String.valueOf(serverRemList!=null));
+            if(localRemList!=null)
+                for(int i=localRemList.size()-1;i>=0;i--)
+                {
+                    String rem = localRemList.get(i).getRemarkString();//getColoredSpanned(Local_Remarks[i], "#ff0000");
+                    String date= getColoredSpanned(localRemList.get(i).getDate(),"#080000");
 
-            for (int i = Remarks.length-1; i >=0 ; i--){
+                    RemUI.append(Html.fromHtml(date));
+                    RemUI.append("\n");
+                    RemUI.append(Html.fromHtml(rem));
+                    RemUI.append("\n\n");
+                }
 
-                String rem = getColoredSpanned(Remarks[i], "#0000FF");
-                String date= getColoredSpanned(Dates[i],"#080000");
-                RemUI.append(Html.fromHtml(date));
-                RemUI.append("\n");
-                RemUI.append(Html.fromHtml(rem));
-                RemUI.append("\n\n");
-            }
+            if(serverRemList!=null)
+                for (int i = serverRemList.size()-1; i >=0 ; i--){
+
+                    String rem = getColoredSpanned(serverRemList.get(i).getRemarkString(), "#0000FF");
+                    String date= getColoredSpanned(serverRemList.get(i).getDate(),"#080000");
+                    RemUI.append(Html.fromHtml(date));
+                    RemUI.append("\n");
+                    RemUI.append(Html.fromHtml(rem));
+                    RemUI.append("\n\n");
+                }
         }
-        test.setText("Mentor: " + Mentor_Name + "\n");
+
+        mentorNameTV.setText("Mentor: " + student.getMentorName()+ "\n");
 
 
 
@@ -761,12 +503,25 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
 
     void showAcadValue() {
-        TextView AcadValue = (TextView) findViewById(R.id.AcadValue);
-        if (this.Academic_Aggregate == 0.0d) {
+        final TextView AcadValue = (TextView) findViewById(R.id.AcadValue);
+        if (student.getAcadAggr() == 0.0d) {
             AcadValue.setVisibility(View.VISIBLE);
         }
-        Handler h = new Handler();
-        h.post(new C04076(AcadValue, h));
+        final Handler h = new Handler();
+        h.post(new Runnable() {
+            @Override
+            public void run() {
+                if (((double) StudentHome.this.Acad_loader) < student.getAcadAggr()) {
+                    AcadValue.setText(StudentHome.this.Acad_loader +"");
+                    StudentHome studentHome = StudentHome.this;
+                    studentHome.Acad_loader += 3;
+                    h.postDelayed(this, 3);
+                    return;
+                }
+                AcadValue.setText(StudentHome.round(StudentHome.this.Academic_Aggregate, 2) +"");
+                StudentHome.this.Acad_loader = 0;
+            }
+        });
     }
 
     public static double round(double value, int places) {
@@ -1016,7 +771,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         graph = null;
 
-        final int switch_var = sem;
         if (mentor_fields.length != 1) {
 
             String[] field = mentor_fields[fieldVal].split(",");
@@ -1024,17 +778,17 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             for(int i=0;i<field.length;i++)
                 Log.d(TAG,"Field Values: "+field[i]);
             Log.d(TAG,"Entered the FieldGraph "+field.length);
-            while(field.length<sem) {
+            while(field.length<student.getSem()) {
                 mentor_fields[fieldVal] += "0,";
                 field = mentor_fields[fieldVal].split(",");
             }
 
             graph = (GraphView) findViewById(R.id.graph);
-            DataPoint dp[] = new DataPoint[sem];
+            DataPoint dp[] = new DataPoint[student.getSem()];
             graph.setTitle("Semester wise performance");
             graph.setTitleTextSize(44);
 
-            for (int i = 0; i < sem; i++) {
+            for (int i = 0; i < student.getSem(); i++) {
 
                 dp[i] = new DataPoint(i, Integer.parseInt(field[i]));
                 Log.d(TAG, field[i]);
@@ -1049,18 +803,18 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             series.setSpacing(10);
 
             graph.getViewport().setMinX(-1);
-            graph.getViewport().setMaxX(sem);
+            graph.getViewport().setMaxX(student.getSem());
 
             graph.getViewport().setMinY(0);
             graph.getViewport().setMaxY(5);
 
             graph.getViewport().setYAxisBoundsManual(true);
             graph.getViewport().setXAxisBoundsManual(true);
-            graph.getGridLabelRenderer().setNumHorizontalLabels(sem);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
 //            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.VERTICAL);
             graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
 
-            graph.getGridLabelRenderer().setNumHorizontalLabels(sem);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
             graph.getGridLabelRenderer().setNumVerticalLabels(5);
             graph.getGridLabelRenderer().setHorizontalAxisTitle("Semesters");
             graph.getGridLabelRenderer().setVerticalAxisTitle("Performance on a scale of 5");
@@ -1118,13 +872,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
 
         graph = (GraphView) findViewById(R.id.graph);
-        DataPoint dp[] = new DataPoint[sem];
+        DataPoint dp[] = new DataPoint[student.getSem()];
         graph.setTitle("Semester wise performance");
         graph.setTitleTextSize(44);
-        for (int i = 0; i < sem; i++) {
+        for (int i = 0; i < student.getSem(); i++) {
 
-            dp[i] = new DataPoint(i, Academics[i]);
-            Log.d(TAG, Academics[i] + "");
+            dp[i] = new DataPoint(i, student.getAcadArr()[i]);
+            Log.d(TAG, student.getAcadArr()[i] + "");
         }
         series = new BarGraphSeries<>(dp);
         graph.removeAllSeries();
@@ -1136,13 +890,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         series.setValuesOnTopColor(Color.BLACK);
 
         graph.getViewport().setMinX(-1);
-        graph.getViewport().setMaxX(sem);
+        graph.getViewport().setMaxX(student.getSem());
 
         graph.getViewport().setMinY(0);
         graph.getViewport().setMaxY(100);
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(sem);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
         graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         graph.getGridLabelRenderer().setVerticalAxisTitle("Performance on a scale of 100");
 
@@ -1191,46 +945,27 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
     }
 
-    double getAggregate(double[] arr) {
-        double sum = 0.0d;
-        int count = 0;
-        for (double d : arr) {
-            Log.d(this.TAG, "d =  " + d);
-            if (d > 0.0d) {
-                count++;
-            }
-            sum += d;
-        }
-        Log.d(this.TAG, "Zero not sent due to " + count + "&&" + sum);
-        if (count == 0 || sum == 0.0d) {
-            return 0.0d;
-        }
-        return sum / ((double) count);
-    }
+
 
     void getData() {
-        String username;
-        String str;
+        String username="";
         studentBackground sbg = new studentBackground(this);
-        String port = getString(R.string.connection_string);
+//        String port = getString(R.string.connection_string);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             this.mentor_id = extras.getString("mentor_id");
-            username = extras.getString("sid");
+            student = extras.getParcelable("studObj");
             this.state = extras.getString("state");
             this.tempResult = extras.getString("res_str");
-            if (this.local_date == null && this.local_rem == null) {
-                this.local_rem = extras.getString("new_rem");
-                this.local_date = extras.getString("new_date");
-                if (this.shouldRatingbeUpdated) {
-                    this.ratingBarResultString = extras.getString("ratingBarResultString");
-                    this.isRatingSubmittable = extras.getString("isRatingSubmittable").equals("1");
-                    this.isStudentFlagged = extras.getString(mentorTable.column8).equals("1");
-                    this.shouldRatingbeUpdated = false;
-                }
-                Log.d(this.TAG, "Bundle from Mentor isStudentFlagged = " + this.isStudentFlagged);
-                Log.d(this.TAG, "Data about isRating: " + this.isRatingSubmittable);
+
+            if (this.shouldRatingbeUpdated) {
+                this.ratingBarResultString = extras.getString("ratingBarResultString");
+                student.setRatingSubmittable(extras.getString("isRatingSubmittable").equals("1"));
+                Log.d(this.TAG, "Bundle from Mentor isStudentFlagged = " + student.isStudentFlagged());
+                this.shouldRatingbeUpdated = false;
             }
+
+
             this.studentImage = extras.getString(mentorTable.column9);
             if (this.studentImage != null) {
                 this.defaultImage = false;
@@ -1248,18 +983,21 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         }
         if(from.equals("login")) {
             Log.d(TAG, username + extras);
-            sbg.execute(username, port);
+            sbg.execute(username, mPort);
             Log.d(TAG, "Started on progresUpdate");
             sbg.onProgressUpdate();
+
             if (sbg.result.equals("NO Net") || sbg.result.equals("Error.studentHome.php")) {
 
 
                 SharedPreferences sharedPreferences2 = getApplicationContext().getSharedPreferences("StudResult", Context.MODE_PRIVATE);
                 tempResult = sharedPreferences2.getString("HomeStuff", "");
+                student = new Student(sharedPreferences2.getString("HomeStuff", ""));
 
 
             } else {
                 tempResult = sbg.result;
+                student = new Student(sbg.result);
                 SharedPreferences settings = getSharedPreferences("StudResult", MODE_PRIVATE);
 
                 // Writing data to SharedPreferences
@@ -1274,7 +1012,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         }
         if (this.tempResult != null) {
             this.arr = this.tempResult.split("<br>");
-            int length = this.arr.length;
             if (arr.length != 1) {
                 this.sid = this.arr[0];
                 if (this.from.equals(Event.LOGIN) && this.justLoggedIn) {
@@ -1282,51 +1019,14 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     Log.d(this.TAG, "Getting Image");
                     this.justLoggedIn = false;
                 }
-                Log.d(this.TAG, this.arr[1] + " " + this.arr[2]);
-                String[] namePair = this.arr[1].split("&&");
-                this.Student_Name = namePair[0];
-                this.Parent_Name = namePair[1];
-                length = namePair.length;
-                if (namePair.length < 2 || !namePair[2].substring(0, 1).equals("0")) {
-                    Log.d(this.TAG, "OTP = None");
-                } else {
-                    Log.d(this.TAG, namePair[2].substring(0, 1));
-                    this.otp = namePair[2].substring(2);
-                    Log.d(this.TAG, "OTP = " + this.otp);
-                }
-                String[] classInfoPair = this.arr[2].split("&&");
-                this.class_id = classInfoPair[0];
-                this.sem = Integer.parseInt(classInfoPair[1]);
-                /*str = this.TAG;
-                String str4 = this.Parent_Name;
-                Log.d(str2, str2 + " " + this.class_id);*/
-                this.Attendance = Integer.parseInt(this.arr[3]);
-                /*Log.d(this.TAG, "arr[5] = " + this.arr[4]);*/
-                String[] temp = this.arr[4].split("~");
-                while (temp.length < this.sem) {
-                    StringBuilder stringBuilder2 = new StringBuilder();
-                    String[] strArr = this.arr;
-                    strArr[4] = stringBuilder2.append(strArr[4]).append("0~").toString();
-                    temp = this.arr[4].split("~");
-                }
-                str = this.TAG;
-                String[] strArr2 = this.arr;
-                /*Log.d(str2, r0[4] + " " + temp.length);*/
-                this.Academics = new double[this.sem];
-                for (int i = 0; i < sem; i++)
-                    Academics[i] = Double.parseDouble(temp[i]);
-                this.Academic_Aggregate = getAggregate(this.Academics);
-                Log.d(this.TAG, "FCFS AGGR = " + this.Academic_Aggregate);
-                isStudentFlagged = arr[5].equals("1"); //returns true if the student is flagged in the database
-                this.Mentor_Name = this.arr[6];
-                this.Remarks = this.arr[7].split("~");
-                this.Dates = this.arr[8].split("~");
+
                 this.mentor_fields = this.arr[9].split("~");
                 Log.d(this.TAG, "mentor fields String: " + this.mentor_fields[0]);
                 return;
                     }
                 }
-            }
+
+    }
 
 
 
@@ -1339,17 +1039,17 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
     void setProfile() {
         ((TextView) findViewById(R.id.ht_noRight)).setText(this.sid);
-        ((TextView) findViewById(R.id.nameRight)).setText(this.Student_Name);
-        ((TextView) findViewById(R.id.parentNameRight)).setText(this.Parent_Name);
-        ((TextView) findViewById(R.id.class_idRight)).setText((this.sem % 2 == 0 ? this.sem / 2 : (this.sem / 2) + 1) + BuildConfig.FLAVOR);
+        ((TextView) findViewById(R.id.nameRight)).setText(student.getName());
+        ((TextView) findViewById(R.id.parentNameRight)).setText(student.getParentName());
+        ((TextView) findViewById(R.id.class_idRight)).setText(student.getYear() + BuildConfig.FLAVOR);
         Log.d(this.TAG, "defaultImageStatus in setProfile = " + this.defaultImage);
         setCircularImage();
-        ((TextView) findViewById(R.id.branchRight)).setText(this.class_id.substring(1, 3).equalsIgnoreCase("IT") ? "IT" : this.class_id.substring(1, 3).toUpperCase() + "E");
-        ((TextView) findViewById(R.id.sectionRight)).setText(this.class_id.substring(3).toUpperCase());
-        ((TextView) findViewById(R.id.semRight)).setText((this.sem % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
-        Log.d(this.TAG, "setProfile isStudentFlagged = " + this.isStudentFlagged);
-        CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
-        cb.setChecked(this.isStudentFlagged);
+        ((TextView) findViewById(R.id.branchRight)).setText(student.getDepartment());
+        ((TextView) findViewById(R.id.sectionRight)).setText(String.valueOf(student.getSection()));
+        ((TextView) findViewById(R.id.semRight)).setText((student.getSem() % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
+        Log.d(this.TAG, "setProfile isStudentFlagged = " + student.isStudentFlagged());
+        final CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
+        cb.setChecked(student.isStudentFlagged());
         Log.d(this.TAG, this.sid);
         if (!this.sid.equalsIgnoreCase("14BD1A052X")) {
             ((TextView) findViewById(R.id.parentNoLeft)).setVisibility(View.INVISIBLE);
@@ -1359,14 +1059,36 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             cb.setVisibility(View.INVISIBLE);
             ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.VISIBLE);
         } else if (this.from.equals("mentor")) {
-            if (this.otp != null) {
+            if (!student.getOTP().equals("1")) {
                 ((LinearLayout) findViewById(R.id.otpLayout)).setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.OTPRight)).setText(this.otp);
+                ((TextView) findViewById(R.id.OTPRight)).setText(student.getOTP());
             }
             cb.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.INVISIBLE);
         }
-        cb.setOnCheckedChangeListener(new AnonymousClass19(cb));
+        cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d(StudentHome.this.TAG, "isStudentFlagged = " + cb.isChecked());
+                student.setStudentFlagged(cb.isChecked());
+                StudentHome studentHome = StudentHome.this;
+                localStruct kmit_mentoring_localStruct = new localStruct();
+                kmit_mentoring_localStruct.getClass();
+                studentHome.db_obj = new localStruct().new localDB(StudentHome.this.getApplicationContext());
+                StudentHome.this.db = StudentHome.this.db_obj.getWritableDatabase();
+                String val = student.isStudentFlagged() ? "1" : "0";
+                ContentValues values = new ContentValues();
+                values.put(mentorTable.column8, val);
+                Log.d(StudentHome.this.TAG, "db.update val = " + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + StudentHome.this.sid + "'", null));
+                Log.d(StudentHome.this.TAG, "isStudentFlagged is updated to the local as" + values);
+
+
+
+
+
+
+            }
+        });
     }
 
     String getLoginStatus() {
@@ -1392,10 +1114,12 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         super.onCreate(savedInstanceState);
         testFlag=true;
         getData();
+        Log.d("Rajni","StudentFlagged in onCreate"+student.isStudentFlagged());
         if (this.tempResult != null && this.arr.length != 1) {
             BottomBar bottomBar;
             setContentView(R.layout.student_homepage);
-            this.test = (TextView) findViewById(R.id.mentorName);
+            mPort = getString(R.string.connection_string);
+            this.mentorNameTV = (TextView) findViewById(R.id.mentorName);
             final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -1403,7 +1127,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             toggle.syncState();
             toolbar.setTitle((CharSequence) "My Attendance");
             toolbar.setTitleTextColor(Color.GRAY);
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             if (this.from.equals(Event.LOGIN)) {
                 navigationView.getMenu().getItem(0).setVisible(true);
                 navigationView.getMenu().getItem(1).setVisible(false);
@@ -1412,7 +1136,19 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 navigationView.getMenu().getItem(1).setVisible(true);
             }
             navigationView.setNavigationItemSelectedListener(this);
-            navigationView.addOnLayoutChangeListener(new AnonymousClass20(navigationView));
+            navigationView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    navigationView.removeOnLayoutChangeListener(this);
+                    TextView textView = (TextView) navigationView.findViewById(R.id.temp2);
+                    if (StudentHome.this.from.equals(Event.LOGIN)) {
+                        textView.setText("Hello " + student.getName());
+                    } else {
+                        textView.setText("This is " + student.getName());
+                    }
+                    textView.setVisibility(View.VISIBLE);
+                }
+            });
             Log.d(TAG,from + "printing from!");
             if (this.from.equals("mentor")) {
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_mentor);
@@ -1442,7 +1178,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
                             /*ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
                             pd.setProgressStyle(1);*/
-                            StudentHome.this.getData();
+                            Log.d(TAG,student.toString());
+//                            StudentHome.this.getData();
+                            Log.d(TAG,student.toString());
                             toolbar.setTitle((CharSequence) "Attendance & Remarks");
                             StudentHome.this.setAreaFor(R.id.view_remarks);
                             StudentHome.this.getRemarks();
@@ -1514,8 +1252,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-        Log.d(this.TAG, "acadAggr before acadGraph = " + this.Academic_Aggregate + BuildConfig.FLAVOR);
-        getAcadGraph(this.Academic_Aggregate);
+        Log.d(this.TAG, "acadAggr before acadGraph = " + student.getAcadAggr() + BuildConfig.FLAVOR);
+        getAcadGraph(student.getAcadAggr());
         getAggrGraph();
     }
 
@@ -1572,21 +1310,44 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 this.hasInternet = true;
             }
             if (this.hasInternet) {
-                LogoutBG lbg = new LogoutBG(this);
-                String port = getString(R.string.connection_string);
+                final LogoutBG lbg = new LogoutBG(this);
+                final String port = getString(R.string.connection_string);
                 AlertDialog alertDialog = new Builder(this).create();
                 alertDialog.setTitle("Logout");
                 alertDialog.setMessage("Your account is already active in some other device");
-                alertDialog.setButton(-1, "All Devices", new AnonymousClass25(lbg, port));
-                alertDialog.setButton(-2, "Current Device", new AnonymousClass26(lbg, port));
+                alertDialog.setButton(-1, "All Devices", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        lbg.execute(new String[]{port, StudentHome.this.sid});
+
+                    }
+                });
+                alertDialog.setButton(-2, "Current Device", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        lbg.execute(new String[]{port, StudentHome.this.sid, StudentHome.this.getIMEI(StudentHome.this)});
+
+                    }
+                });
                 if (this.LoggedInDevices == null || this.LoggedInDevices.length <= 1) {
                     lbg.execute(new String[]{port, this.sid});
                 } else {
                     alertDialog.show();
                     Log.d(this.TAG, "Dialog shown");
                 }
-                Handler h1 = new Handler();
-                h1.post(new AnonymousClass27(lbg, h1));
+                final Handler h1 = new Handler();
+                h1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (lbg.result == null || lbg.result.equals(BuildConfig.FLAVOR)) {
+                            h1.postDelayed(this, 5);
+                        } else if (lbg.result.equals("1")) {
+                            StudentHome.this.onLogout();
+                        } else {
+                            Toast.makeText(StudentHome.this, "Unable to logout", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             } else {
                 Toast.makeText(this, "NO NET", Toast.LENGTH_SHORT).show();
             }
@@ -1614,7 +1375,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             Button b = (Button) findViewById(R.id.UpdateToServerStudentSide);
             b.setText("Updating Data...");
             b.setClickable(false);
-            if (new UpdateData(this, getString(R.string.connection_string), this.mentor_id, this.sem).UpdateToServer()) {
+            if (new UpdateData(this, getString(R.string.connection_string), this.mentor_id,student.getSem()).UpdateToServer()) {
                 Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(this, MentorHome.class);
                 i.putExtra("coming_from", this.sid);

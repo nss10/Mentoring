@@ -49,32 +49,37 @@ import kmit.mentoring.localStruct.localDB;
 import kmit.mentoring.localStruct.mentorTable;
 
 public class MentorHome extends Activity implements OnNavigationItemSelectedListener, OnClickListener {
-    ListView Flaggedstdlist;
+
+    Student studArr[];
+
+    public int studentCount;
+    int cur_sidCount;
+    int studentSem;
+
     String TAG;
     String allStudentString;
-    int cur_sidCount;
+    String loginStatus;
+    String username;
+    String name;
+    String from_sid;
+    String mPort;
+    String[] result;
+
     SQLiteDatabase db;
     localDB db_obj;
+
     Editor editor;
-    Bundle extras;
-    String from_sid;
+
     boolean hasInternet;
     boolean isDataUpdated;
     boolean isLocalDataFilled;
-    ProgressDialog loading;
-    String loginStatus;
-    String name;
-    NavigationView navigationView;
-    String[] result;
-    statusCheckBG scbg;
     boolean shouldRatingBeChanged;
+
+    ProgressDialog loading;
+    NavigationView navigationView;
     ListView stdlist;
-    public int studentCount;
-    int studentSem;
     Toolbar toolbar;
-    String username;
-    Student studArr[];
-    String mPort;
+    statusCheckBG scbg;
 
 
 
@@ -92,7 +97,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         immagex.compress(CompressFormat.PNG, 100, baos);
         return Base64.encodeToString(baos.toByteArray(), 0);
     }
-
     /* renamed from: kmit.mentoring.MentorHome.1GetImage */
     class AnonymousClass1GetImage extends AsyncTask<String, Void, Bitmap> {
         String img_str;
@@ -159,11 +163,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
                     e2.printStackTrace();
                     return image;
                 }
-            } catch (MalformedURLException e5) {
-                e = e5;
-                e.printStackTrace();
-                return image;
-            } catch (IOException e6) {
+            }  catch (IOException e6) {
                 e2 = e6;
                 e2.printStackTrace();
                 return image;
@@ -171,7 +171,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             return image;
         }
     }
-
     private void getImage(String sid) {
         new AnonymousClass1GetImage(sid).execute(new String[]{sid});
     }
@@ -213,7 +212,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             }
         });
     }
-
     void getDataFromServer() {
         Log.d(this.TAG, "GetDataFromServer");
         mentorBackground mbg = new mentorBackground(this);
@@ -265,7 +263,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         new UpdateData(this, getString(R.string.connection_string), this.username, studentSem).UpdateLocal2(studArr);
 
     }
-
     void UpdateToServer() {
         String port = getString(R.string.connection_string);
         getDataFromLocal();
@@ -287,8 +284,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         this.hasInternet = true;
         return this.scbg.result;
     }
-
-
     public String getIMEI(Context context) {
         return ((TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE)).getDeviceId();
     }
@@ -316,7 +311,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         et_new_pwd.setText(BuildConfig.FLAVOR);
         et_confirm_new_pwd.setText(BuildConfig.FLAVOR);
     }
-
     void UIonDataUpdate() {
         final Handler h1 = new Handler();
         Log.d(this.TAG, "isLocalDataFilled" + this.isLocalDataFilled);
@@ -342,9 +336,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             this.loading.dismiss();
         }
     }
-
     void selectStudent(Cursor c, String state) {
-        String sid = c.getString(c.getColumnIndex(mentorTable.column1));
         String res_str = c.getString(c.getColumnIndex(mentorTable.column3));
         String new_rem = c.getString(c.getColumnIndex(mentorTable.column4));
         String new_date = c.getString(c.getColumnIndex(mentorTable.column5));
@@ -352,7 +344,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         String isRatingSubmittable = c.getString(c.getColumnIndex(mentorTable.column7));
         String isStudentFlagged = c.getString(c.getColumnIndex(mentorTable.column8));
         String studentImage = c.getString(c.getColumnIndex(mentorTable.column9));
-        Log.d(this.TAG, "sid = " + sid + " isStudentFlagged = " + isStudentFlagged);
 
         if (isStudentFlagged == null) {
             isStudentFlagged = "0";
@@ -361,25 +352,26 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             ratingBarResultString = "0~0~0~0~0~0~0~";
         }
         Intent i = new Intent(getApplicationContext(), StudentHome.class);
-        Log.d("Rajni",new_rem+" " + new_date);
+
         Student student = new Student(res_str);
-        student.setStudentFlagged(isStudentFlagged.equals("1"));
         student.setLocalRemarks(new_rem,new_date);
+        student.setRatingBarResultString(ratingBarResultString);
+        student.setRatingSubmittable(isRatingSubmittable.equals("1"));
+        student.setStudentFlagged(isStudentFlagged.equals("1"));
+        Log.d(TAG,"Student image equals " + studentImage);
+        //student.setStudentImage(studentImage);
+//         Use to display the changing intent problem
+        SharedPreferences img_store = this.getSharedPreferences("img_store", 0);
+        Log.d(TAG, "StudentImage adding in sharedPreferences" + student.getStudentImage());
+        Editor editor = img_store.edit();
+        editor.putString("img_stud", studentImage);
+        editor.apply();
         i.putExtra("studObj",student);
-        i.putExtra("sid", sid);
         i.putExtra("mentor_id", this.username);
         i.putExtra("state", state);
-        Log.d(this.TAG, "Creating intent for sid = " + sid);
-        i.putExtra("res_str", res_str);
-        i.putExtra("new_rem", new_rem);
-        i.putExtra("new_date", new_date);
-        i.putExtra("ratingBarResultString", ratingBarResultString);
-        i.putExtra("isRatingSubmittable", isRatingSubmittable);
-        i.putExtra(mentorTable.column8, isStudentFlagged);
-        i.putExtra(mentorTable.column9, studentImage);
         startActivity(i);
         finish();
-        Log.d(this.TAG, "Creating intent for sid = " + sid);
+        Log.d(this.TAG, "Creating intent for sid = " + student.getSid());
     }
 
 
@@ -488,10 +480,36 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             }
         }
     }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+    public void onBackPressed() {
+        Intent startMain = new Intent("android.intent.action.MAIN");
+        startMain.addCategory("android.intent.category.HOME");
+        startMain.setFlags(268435456);
+        startActivity(startMain);
+    }
+    void onLogout(boolean shouldUpdate) {
+        if (shouldUpdate) {
+            UpdateToServer();
+        }
+        if (this.isDataUpdated || !shouldUpdate) {
+            Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
+            this.db.delete(mentorTable.table_name, null, null);
+            editor.remove("username");
+            editor.remove("login_status");
+            editor.remove("image_stud");
+            editor.commit();
+            LogoutBG lbg = new LogoutBG(this);
+            lbg.execute(getString(R.string.connection_string), this.username);
+            lbg.onProgressUpdate(new Void[0]);
+            startActivity(new Intent(this, MainActivity.class));
+            Toast.makeText(MentorHome.this, "Data Updated and logged out", Toast.LENGTH_SHORT).show();
+
+            return;
+        }
+        Toast.makeText(getApplicationContext(), "You need internet to logout", Toast.LENGTH_LONG).show();
     }
 
     public void onClick(View v) {
@@ -503,7 +521,6 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             this.navigationView.getMenu().getItem(0).setChecked(true);
         }
     }
-
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         this.toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -512,8 +529,10 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         switch (id) {
             case R.id.students /*2131689770*/:
                 this.toolbar.setTitle((CharSequence) "MY STUDENTS");
-                lv.setVisibility(View.INVISIBLE);
-                view_change_password.setVisibility(View.VISIBLE);
+                lv.setVisibility(View.VISIBLE);
+                ((Button) findViewById(R.id.UpdateToServer)).setVisibility(View.VISIBLE);
+                ((TableRow) findViewById(R.id.indicatorRow)).setVisibility(View.VISIBLE);
+                view_change_password.setVisibility(View.INVISIBLE);
                 break;
             case R.id.change_password /*2131689771*/:
                 this.toolbar.setTitle((CharSequence) "MY Account");
@@ -534,31 +553,5 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         }
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
         return true;
-    }
-
-    public void onBackPressed() {
-        Intent startMain = new Intent("android.intent.action.MAIN");
-        startMain.addCategory("android.intent.category.HOME");
-        startMain.setFlags(268435456);
-        startActivity(startMain);
-    }
-
-    void onLogout(boolean shouldUpdate) {
-        if (shouldUpdate) {
-            UpdateToServer();
-        }
-        if (this.isDataUpdated || !shouldUpdate) {
-            Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
-            this.db.delete(mentorTable.table_name, null, null);
-            editor.remove("username");
-            editor.remove("login_status");
-            editor.commit();
-            LogoutBG lbg = new LogoutBG(this);
-            lbg.execute(getString(R.string.connection_string), this.username);
-            lbg.onProgressUpdate(new Void[0]);
-            startActivity(new Intent(this, MainActivity.class));
-            return;
-        }
-        Toast.makeText(getApplicationContext(), "You need internet to logout", Toast.LENGTH_LONG).show();
     }
 }

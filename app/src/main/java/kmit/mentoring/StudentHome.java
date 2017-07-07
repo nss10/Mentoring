@@ -1,5 +1,7 @@
 package kmit.mentoring;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -89,55 +91,51 @@ import kmit.mentoring.localStruct.localDB;
 import kmit.mentoring.localStruct.mentorTable;
 
 public class StudentHome extends Activity implements OnNavigationItemSelectedListener, OnClickListener {
+
+    Student student;
+
     int Acad_loader;
-    double Academic_Aggregate;
-    double[] Academics;
-    int Attendance;
-    String[] Dates;
+
+    boolean defaultImage;
+    boolean hasInternet;
+    boolean isSharedPreferencesEmpty;
+    boolean justLoggedIn;
+    boolean shouldRatingbeUpdated;
     boolean ExitFlag;
+
+    View mDashboardView,mViewRemarksView,mSetRemarksView,mViewPerformanceView,mChangePasswordView;
+
     String[] FieldList;
     String[] FieldListAbbr;
     String[] LoggedInDevices;
-    String Mentor_Name;
-    String Parent_Name;
-    String[] Remarks;
-    String Student_Name;
-    String TAG;
+
     ArrayAdapter adapter;
-    String[] arr;
-    String class_id;
+
     SQLiteDatabase db;
     localDB db_obj;
-    boolean defaultImage;
-    String from;
+
     GraphView graph;
-    boolean hasInternet;
-    boolean isRatingSubmittable;
-    boolean isStudentFlagged;
-    boolean issharedPreferencesEmpty;
-    boolean justLoggedIn;
-    String local_date;
-    String local_rem;
-    String[] mentor_fields;
-    String mentor_id;
-    String otp;
-    String ratingBarResultString;
-    statusCheckBG scbg;
-    int sem;
     BarGraphSeries<DataPoint> series;
-    boolean shouldRatingbeUpdated;
-    String sid;
-    Spinner sp;
+
+    String from;
+    String TAG;
     String state;
-    String studentImage;
+    String mentor_id;
     String tempResult;
-    TextView mentorNameTV;
-    TextView test;
-    static boolean testFlag;
-    Student student;
     String mPort;
 
+    Spinner sp;
+    TextView mentorNameTV;
+    BottomBar bottomBar;
 
+    statusCheckBG scbg;
+
+
+
+
+
+
+//Constructor
 
     public StudentHome() {
         this.TAG = "StudentHome";
@@ -151,17 +149,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
     }
 
-    public static String encodeTobase64(Bitmap image) {
-        Bitmap immagex = image;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        immagex.compress(CompressFormat.PNG, 100, baos);
-        return Base64.encodeToString(baos.toByteArray(), 0);
-    }
 
-    public static Bitmap decodeBase64(String input) {
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
+
+//Image Related
 
     private void getImage() {
         new AsyncTask<String, Void, Bitmap>() {
@@ -176,12 +166,12 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 Log.d(StudentHome.this.TAG, "onPostExecute" + b);
                 super.onPostExecute(b);
                 this.loading.dismiss();
-                if (b != null && !StudentHome.this.issharedPreferencesEmpty) {
-                    StudentHome.this.studentImage = StudentHome.encodeTobase64(b);
+                if (b != null && !StudentHome.this.isSharedPreferencesEmpty) {
+                    student.setStudentImage(StudentHome.encodeTobase64(b));
                     SharedPreferences img_store = StudentHome.this.getSharedPreferences("img_store", 0);
-                    Log.d(StudentHome.this.TAG, "StudentImage adding in sharedPreferences" + StudentHome.this.studentImage);
+                    Log.d(StudentHome.this.TAG, "StudentImage adding in sharedPreferences" + student.getStudentImage());
                     Editor editor = img_store.edit();
-                    editor.putString("img_stud", StudentHome.this.studentImage);
+                    editor.putString("img_stud", student.getStudentImage());
                     editor.apply();
                     StudentHome.this.defaultImage = false;
                     Log.d(StudentHome.this.TAG, "defaultImageStatus in onPostExecute = " + StudentHome.this.defaultImage);
@@ -218,36 +208,115 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 }
                 return image;
             }
-        }.execute(new String[]{this.sid});
-        Log.d(this.TAG, "sid when getting image = " + this.sid);
+        }.execute(student.getSid());
+        Log.d(this.TAG, "sid when getting image = " + student.getSid());
     }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2) {
-            this.ratingBarResultString = data.getStringExtra("Rating String");
-            student.setRatingSubmittable(Boolean.parseBoolean(data.getStringExtra("isSubmittable")));
-            Log.d(this.TAG, "onActivityResult isRatingSubmittable: " + student.isRatingSubmittable());
-            updateRatingToLocal();
+    public static String encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(CompressFormat.PNG, 100, baos);
+        return Base64.encodeToString(baos.toByteArray(), 0);
+    }
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
+    void setCircularImage() {
+        if (!this.defaultImage) {
+            ((CircleImageView) findViewById(R.id.circ_img)).setImageBitmap(decodeBase64(student.getStudentImage()));
+            Log.d(this.TAG, "getImage done");
         }
     }
 
-    void updateRatingToLocal() {
 
-        this.db_obj = new localStruct().new localDB(getApplicationContext());
-        this.db = this.db_obj.getWritableDatabase();
-        String val = student.isRatingSubmittable() ? "1" : "0";
-        ContentValues values = new ContentValues();
-        values.put(mentorTable.column6, this.ratingBarResultString);
-        values.put(mentorTable.column7, val);
-        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + this.sid + "'", null)+this.ratingBarResultString + "isRatingSubmittable in LocalStruct " + student.isRatingSubmittable());
+
+
+//UI related
+
+    void setAreaFor(int id) {
+       mDashboardView.setVisibility(View.INVISIBLE);
+        mSetRemarksView.setVisibility(View.INVISIBLE);
+        mViewPerformanceView.setVisibility(View.INVISIBLE);
+        mViewRemarksView.setVisibility(View.INVISIBLE);
+        mChangePasswordView.setVisibility(View.INVISIBLE);
+
+
+        if (id == R.id.RemarkView) {
+            mSetRemarksView.setVisibility(View.VISIBLE);
+        } else if (id == R.id.student_dashboard) {
+            mDashboardView.setVisibility(View.VISIBLE);
+        } else if (id == R.id.view_remarks) {
+            mViewRemarksView.setVisibility(View.VISIBLE);
+        } else if (id == R.id.view_change_password) {
+            Log.d(this.TAG, "View Changing for ChangePassword");
+            mChangePasswordView.setVisibility(View.VISIBLE);
+        } else if (id == R.id.view_performance) {
+            mViewPerformanceView.setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.NoGraph)).setVisibility(View.VISIBLE);
+            this.graph = (GraphView) findViewById(R.id.graph);
+            this.graph.setVisibility(View.INVISIBLE);
+        }
     }
+    void setProfile() {
+        ((TextView) findViewById(R.id.ht_noRight)).setText(student.getSid());
+        ((TextView) findViewById(R.id.nameRight)).setText(student.getName());
+        ((TextView) findViewById(R.id.parentNameRight)).setText(student.getParentName());
+        ((TextView) findViewById(R.id.class_idRight)).setText(student.getYear() + BuildConfig.FLAVOR);
+        Log.d(this.TAG, "defaultImageStatus in setProfile = " + this.defaultImage);
+        setCircularImage();
+        ((TextView) findViewById(R.id.branchRight)).setText(student.getDepartment());
+        ((TextView) findViewById(R.id.sectionRight)).setText(String.valueOf(student.getSection()));
+        ((TextView) findViewById(R.id.semRight)).setText((student.getSem() % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
+        ((TextView) findViewById(R.id.parentNoRight)).setText((student.getPhone()));
+        Log.d(this.TAG, "setProfile isStudentFlagged = " + student.isStudentFlagged());
+        final CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
+        cb.setChecked(student.isStudentFlagged());
+        Log.d(this.TAG, student.getSid());
+        /*if (!student.getSid().equalsIgnoreCase("14BD1A052X")) {
+            ((TextView) findViewById(R.id.parentNoLeft)).setVisibility(View.INVISIBLE);
+            ((TextView) findViewById(R.id.parentNoRight)).setVisibility(View.INVISIBLE);
+        }*/
+        if (this.from.equals(Event.LOGIN)) {
+            cb.setVisibility(View.INVISIBLE);
+            ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.VISIBLE);
+        } else if (this.from.equals("mentor")) {
+            if (!student.getOTP().equals("1")) {
+                ((LinearLayout) findViewById(R.id.otpLayout)).setVisibility(View.VISIBLE);
+                ((TextView) findViewById(R.id.OTPRight)).setText(student.getOTP());
+            }
+            cb.setVisibility(View.VISIBLE);
+            ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.INVISIBLE);
+        }
+        cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d(StudentHome.this.TAG, "isStudentFlagged = " + cb.isChecked());
+                student.setStudentFlagged(cb.isChecked());
+                StudentHome studentHome = StudentHome.this;
+                localStruct kmit_mentoring_localStruct = new localStruct();
+                kmit_mentoring_localStruct.getClass();
+                studentHome.db_obj = new localStruct().new localDB(StudentHome.this.getApplicationContext());
+                StudentHome.this.db = StudentHome.this.db_obj.getWritableDatabase();
+                String val = student.isStudentFlagged() ? "1" : "0";
+                ContentValues values = new ContentValues();
+                values.put(mentorTable.column8, val);
+                Log.d(StudentHome.this.TAG, "db.update val = " + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid() + "'", null));
+                Log.d(StudentHome.this.TAG, "isStudentFlagged is updated to the local as" + values);
 
+
+
+
+
+
+            }
+        });
+    }
     void nav_SetRemark() {
         final Spinner sp = (Spinner) findViewById(R.id.RemarkSpinner);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.RemarkList, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
+        sp.requestFocus();
         Button submitRemark = (Button) findViewById(R.id.SubmitRemark);
         this.db_obj = new localStruct().new localDB(getApplicationContext());
         this.db = this.db_obj.getWritableDatabase();
@@ -257,9 +326,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             @Override
             public void onClick(View v) {
                 final String new_rem = et.getText().toString().trim();
-                if (imm != null) {
-                    imm.toggleSoftInput(1, 0);
-                }
+               if(imm!=null)
+                    imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
+
                 if (new_rem.length() == 0) {
                     Toast.makeText(StudentHome.this, "Please Enter a remark to submit", Toast.LENGTH_SHORT).show();
                     return;
@@ -301,9 +370,13 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 builder.setNegativeButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (imm != null) {
-                            imm.toggleSoftInput(1, 0);
-                        }
+                        /*if (imm != null) {
+                            imm.toggleSoftInput(InputMethodManager.RESULT_SHOWN, InputMethodManager.RESULT_SHOWN);
+                        }*/
+                        et.requestFocus();
+                        imm.showSoftInput(et,InputMethodManager.SHOW_FORCED);
+
+
                     }
                 });
                 builder.create().show();
@@ -327,8 +400,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                            Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
-                            i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
+                            Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
+                            i.putExtra("ratingBarResultString", student.getRatingBarResultString());
                             i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
                             i.putExtra("mode", "edit");
                             StudentHome.this.startActivityForResult(i, 2);
@@ -338,8 +411,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                            Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
-                            i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
+                            Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
+                            i.putExtra("ratingBarResultString", student.getRatingBarResultString());
                             i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
                             i.putExtra("mode", "view");
                             StudentHome.this.startActivityForResult(i, 2);
@@ -355,8 +428,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     return;
                 }
                 Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                Log.d(StudentHome.this.TAG, "So and So:" + StudentHome.this.ratingBarResultString);
-                i.putExtra("ratingBarResultString", StudentHome.this.ratingBarResultString);
+                Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
+                i.putExtra("ratingBarResultString", student.getRatingBarResultString());
                 i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
                 i.putExtra("mode", "edit");
                 StudentHome.this.startActivityForResult(i, 2);
@@ -366,7 +439,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (imm != null) {
-                    imm.toggleSoftInput(1, 0);
+                    imm.hideSoftInputFromWindow(et.getWindowToken(), 0);
                 }
                 return false;
             }
@@ -403,54 +476,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
         });
     }
-
-    void changePassword() {
-        EditText et_new_pwd = (EditText) findViewById(R.id.new_pwd);
-        EditText et_confirm_new_pwd = (EditText) findViewById(R.id.confirm_new_pwd);
-        Button change_pwd = (Button) findViewById(R.id.button_change_password);
-        String cur_pwd = ((EditText) findViewById(R.id.cur_pwd)).getText().toString().trim();
-        String new_pwd = ((EditText) findViewById(R.id.new_pwd)).getText().toString().trim();
-        if (et_new_pwd.getText().toString().trim().equals(et_confirm_new_pwd.getText().toString().trim())) {
-            setPasswordBG spbg = new setPasswordBG(this);
-            spbg.execute(new String[]{getString(R.string.connection_string), this.sid, cur_pwd, new_pwd});
-            spbg.onProgressUpdate(new Void[0]);
-            return;
-        }
-        Toast.makeText(this, "Passwords did not match", Toast.LENGTH_SHORT).show();
-    }
-
-    void setAreaFor(int id) {
-        View std_dash = findViewById(R.id.student_dashboard);
-        std_dash.setVisibility(View.INVISIBLE);
-        View rm = findViewById(R.id.RemarkView);
-        rm.setVisibility(View.INVISIBLE);
-        View vp = findViewById(R.id.view_performance);
-        vp.setVisibility(View.INVISIBLE);
-        View vr = findViewById(R.id.view_remarks);
-        vr.setVisibility(View.INVISIBLE);
-        View cp = findViewById(R.id.view_change_password);
-        cp.setVisibility(View.INVISIBLE);
-        if (id == R.id.RemarkView) {
-            rm.setVisibility(View.VISIBLE);
-        } else if (id == R.id.student_dashboard) {
-            std_dash.setVisibility(View.VISIBLE);
-        } else if (id == R.id.view_remarks) {
-            vr.setVisibility(View.VISIBLE);
-        } else if (id == R.id.view_change_password) {
-            Log.d(this.TAG, "View Changing for ChangePassword");
-            cp.setVisibility(View.VISIBLE);
-        } else if (id == R.id.view_performance) {
-            vp.setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.NoGraph)).setVisibility(View.VISIBLE);
-            this.graph = (GraphView) findViewById(R.id.graph);
-            this.graph.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private String getColoredSpanned(String text, String color) {
-        return "<font color=" + color + ">" + text + "</font>";
-    }
-
     void getRemarks() {
 
         Log.d(TAG,"student = "+student.toString());
@@ -460,7 +485,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         RemUI.setVisibility(View.VISIBLE);
         TextView RemHead = (TextView) findViewById(R.id.RemHead);
         RemHead.setVisibility(View.VISIBLE);
-        Log.d(TAG,local_rem+" This is the local_rem");
         if(student.getNew_remarkList()==null && student.getRemarkList()==null)
         {
             RemUI.setText("No Remarks");
@@ -500,8 +524,139 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
 
     }
+    void showPerformance() {
+        this.adapter = ArrayAdapter.createFromResource(this, R.array.fieldList, android.R.layout.simple_spinner_dropdown_item);
+        this.adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.sp = (Spinner) findViewById(R.id.spinner_perf);
+        this.sp.setAdapter(this.adapter);
+        this.sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
+                ((TextView) parent.getChildAt(0)).setTextSize(18.0f);
+                if (((int) parent.getItemIdAtPosition(position)) > 0) {
+                    ((TextView) StudentHome.this.findViewById(R.id.NoGraph)).setVisibility(View.INVISIBLE);
+                    if (position <= 7) {
+                        StudentHome.this.getFieldGraph(((int) parent.getItemIdAtPosition(position)) - 1);
+                    } else {
+                        StudentHome.this.getSemAcadGraph();
+                    }
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+        Log.d(this.TAG, "acadAggr before acadGraph = " + student.getAcadAggr() + BuildConfig.FLAVOR);
+        getAcadGraph(student.getAcadAggr());
+        getAggrGraph();
+    }
+    void changePassword() {
+        EditText et_new_pwd = (EditText) findViewById(R.id.new_pwd);
+        EditText et_confirm_new_pwd = (EditText) findViewById(R.id.confirm_new_pwd);
+        Button change_pwd = (Button) findViewById(R.id.button_change_password);
+        String cur_pwd = ((EditText) findViewById(R.id.cur_pwd)).getText().toString().trim();
+        String new_pwd = ((EditText) findViewById(R.id.new_pwd)).getText().toString().trim();
+        if (et_new_pwd.getText().toString().trim().equals(et_confirm_new_pwd.getText().toString().trim())) {
+            setPasswordBG spbg = new setPasswordBG(this);
+            spbg.execute(getString(R.string.connection_string), student.getSid(), cur_pwd, new_pwd);
+            spbg.onProgressUpdate();
+            return;
+        }
+        Toast.makeText(this, "Passwords did not match", Toast.LENGTH_SHORT).show();
+    }
 
 
+//Data related
+
+    void getData() {
+        String username = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).getString(getString(R.string.user_name), EnvironmentCompat.MEDIA_UNKNOWN);
+
+        studentBackground sbg = new studentBackground(this);
+
+    from = getIntent().getExtras()==null?"login":"mentor";
+    if(from.equals("login")) {
+        Log.d(TAG, username);
+        sbg.execute(username, mPort);
+        Log.d(TAG, "Started on progresUpdate");
+        sbg.onProgressUpdate();
+
+        if (sbg.result.equals("NO Net") || sbg.result.equals("Error_studentHome_php")) {
+
+
+            SharedPreferences sharedPreferences2 = getApplicationContext().getSharedPreferences("StudResult", Context.MODE_PRIVATE);
+            tempResult = sharedPreferences2.getString("HomeStuff", "");
+            student = new Student(sharedPreferences2.getString("HomeStuff", ""));
+
+
+        } else {
+            tempResult = sbg.result;
+            Log.d(TAG,sbg.result);
+            student = new Student(sbg.result);
+            SharedPreferences settings = getSharedPreferences("StudResult", MODE_PRIVATE);
+
+            // Writing data to SharedPreferences
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("HomeStuff", tempResult);
+            editor.apply();
+
+            // Reading from SharedPreferences
+            String value = settings.getString("key", "");
+            Log.d(TAG, value + tempResult);
+        }
+    }
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            this.mentor_id = extras.getString("mentor_id");
+            student = extras.getParcelable("studObj");
+            Log.d(TAG,student.toString());
+            this.state = extras.getString("state");
+
+            student.setStudentImage(getSharedPreferences("img_store", 0).getString("img_stud", "null"));
+            if (!student.getStudentImage().equals("null")) {
+                this.defaultImage = false;
+            }
+//                uncomment to show the changing intent problem
+
+            Log.d(this.TAG, "defaultImageStatus in fromMentor = " + this.defaultImage + " : " + student.getStudentImage());
+            this.from = "mentor";
+        } else {
+            student.setStudentImage(getSharedPreferences("img_store", 0).getString("img_stud", "null"));
+            Log.d(this.TAG, "getting studentImage from SharedPreferences = " + student.getStudentImage());
+            if (!student.getStudentImage().equals("null")) {
+                this.defaultImage = false;
+            }
+            Log.d(this.TAG, "defaultImageStatus in getData(extras==null) = " + this.defaultImage);
+        }
+    if (this.tempResult != null) {
+
+        if (this.from.equals(Event.LOGIN) && this.justLoggedIn) {
+            getImage();
+            Log.d(this.TAG, "Getting Image");
+            this.justLoggedIn = false;
+        }
+
+        return;
+    }
+}
+    void updateRatingToLocal() {
+
+        this.db_obj = new localStruct().new localDB(getApplicationContext());
+        this.db = this.db_obj.getWritableDatabase();
+        String val = student.isRatingSubmittable() ? "1" : "0";
+        ContentValues values = new ContentValues();
+        values.put(mentorTable.column6, student.getRatingBarResultString());
+        values.put(mentorTable.column7, val);
+        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid()+ "'", null)+student.getRatingBarResultString()+ "isRatingSubmittable in LocalStruct " + student.isRatingSubmittable());
+    }
+
+
+
+//UI_HelperMethods
+
+    private String getColoredSpanned(String text, String color) {
+        return "<font color=" + color + ">" + text + "</font>";
+    }
     void showAcadValue() {
         final TextView AcadValue = (TextView) findViewById(R.id.AcadValue);
         if (student.getAcadAggr() == 0.0d) {
@@ -518,12 +673,11 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     h.postDelayed(this, 3);
                     return;
                 }
-                AcadValue.setText(StudentHome.round(StudentHome.this.Academic_Aggregate, 2) +"");
+                AcadValue.setText(StudentHome.round(student.getAcadAggr(), 2) +"");
                 StudentHome.this.Acad_loader = 0;
             }
         });
     }
-
     public static double round(double value, int places) {
         Log.d("StudentHome", value + "");
         if (((int) value) == 0) {
@@ -535,6 +689,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         throw new IllegalArgumentException();
     }
 
+
+//Graph related
 
     void getAcadGraph(double Academic_Aggregate) {
         graph = (GraphView) findViewById(R.id.acadGraph);
@@ -582,8 +738,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
         });
     }
-
-    void getAttGraph(int Attendance) {
+    void getAttGraph(double Attendance) {
         graph = (GraphView) findViewById(R.id.attGraph);
         graph.removeAllSeries();
         graph.setVisibility(View.VISIBLE);
@@ -637,17 +792,17 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         });
     }
     void getAggrGraph() {
-        String[] mentor_fields = arr[9].split("~");
 
-        if (mentor_fields.length == 1)
-            return;
-        Log.d(TAG,"This is mento_fields[6]"+mentor_fields[6]);
-        String[] aggr = mentor_fields[7].split(",");
+        if(student.getMentorFields()==null)
+                return;
+
+
+        int[] aggr = student.getMentorFields().getAggr();
         DataPoint[] dp = new DataPoint[9];
         dp[0] = new DataPoint(0, 6);
         dp[8] = new DataPoint(8, 6);
         for (int i = 1; i < 8; i++)
-            dp[i] = new DataPoint(i, Integer.parseInt(aggr[i - 1]));
+            dp[i] = new DataPoint(i, aggr[i - 1]);
 
         graph = (GraphView) findViewById(R.id.aggrGraph);
 
@@ -765,106 +920,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         graph.setVisibility(View.VISIBLE);
 
     }
-
-    void getFieldGraph(int fieldVal) {
-
-
-        graph = null;
-
-        if (mentor_fields.length != 1) {
-
-            String[] field = mentor_fields[fieldVal].split(",");
-            Log.d(TAG,"Entered the FieldGraph "+field.length);
-            for(int i=0;i<field.length;i++)
-                Log.d(TAG,"Field Values: "+field[i]);
-            Log.d(TAG,"Entered the FieldGraph "+field.length);
-            while(field.length<student.getSem()) {
-                mentor_fields[fieldVal] += "0,";
-                field = mentor_fields[fieldVal].split(",");
-            }
-
-            graph = (GraphView) findViewById(R.id.graph);
-            DataPoint dp[] = new DataPoint[student.getSem()];
-            graph.setTitle("Semester wise performance");
-            graph.setTitleTextSize(44);
-
-            for (int i = 0; i < student.getSem(); i++) {
-
-                dp[i] = new DataPoint(i, Integer.parseInt(field[i]));
-                Log.d(TAG, field[i]);
-            }
-            series = new BarGraphSeries<>(dp);
-            graph.removeAllSeries();
-
-            graph.addSeries(series);
-            graph.setVisibility(View.VISIBLE);
-            series.setDrawValuesOnTop(true);
-            series.setValuesOnTopColor(Color.BLACK);
-            series.setSpacing(10);
-
-            graph.getViewport().setMinX(-1);
-            graph.getViewport().setMaxX(student.getSem());
-
-            graph.getViewport().setMinY(0);
-            graph.getViewport().setMaxY(5);
-
-            graph.getViewport().setYAxisBoundsManual(true);
-            graph.getViewport().setXAxisBoundsManual(true);
-            graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
-//            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.VERTICAL);
-            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
-
-            graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
-            graph.getGridLabelRenderer().setNumVerticalLabels(5);
-            graph.getGridLabelRenderer().setHorizontalAxisTitle("Semesters");
-            graph.getGridLabelRenderer().setVerticalAxisTitle("Performance on a scale of 5");
-            graph.getGridLabelRenderer().setHorizontalAxisTitleTextSize(34);
-            graph.getGridLabelRenderer().setVerticalAxisTitleTextSize(34);
-
-
-            graph.getGridLabelRenderer().setLabelFormatter(new LabelFormatter() {
-
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX)
-                        return  (((int)value)/2+1) + "-" +(((int)value)%2+1);
-                    return value + "";
-                }
-
-                @Override
-                public void setViewport(Viewport viewport) {
-
-                }
-            });
-            series.setAnimated(true);
-            series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
-                @Override
-                public int get(DataPoint data) {
-                    switch ((int) data.getY()) {
-                        case 1:
-                            return Color.rgb(255, 0, 0);
-                        case 2:
-                            return Color.rgb(255, 100, 0);//return Color.rgb(255, 153, 102);
-                        case 3:
-                            return Color.rgb(200, 100, 100);
-                        case 4:
-                            return Color.rgb(200, 200, 100);//return Color.rgb(0,255,255);
-                        case 5:
-                            return Color.rgb(0, 200, 0);
-
-
-                        default:
-                            return Color.rgb(255, 255, 255);
-                    }
-                }
-
-            });
-        } else {
-            test.setText("\n Not graded");
-
-        }
-    }
-
     void getSemAcadGraph() {
 
 
@@ -944,189 +999,153 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         });
 
     }
+    void getFieldGraph(int fieldVal) {
 
 
+        graph = null;
 
-    void getData() {
-        String username="";
-        studentBackground sbg = new studentBackground(this);
-//        String port = getString(R.string.connection_string);
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            this.mentor_id = extras.getString("mentor_id");
-            student = extras.getParcelable("studObj");
-            this.state = extras.getString("state");
-            this.tempResult = extras.getString("res_str");
+        if (student.getMentorFields()!=null) {
+            int[] field = student.getMentorFields().getFieldArray(fieldVal);
 
-            if (this.shouldRatingbeUpdated) {
-                this.ratingBarResultString = extras.getString("ratingBarResultString");
-                student.setRatingSubmittable(extras.getString("isRatingSubmittable").equals("1"));
-                Log.d(this.TAG, "Bundle from Mentor isStudentFlagged = " + student.isStudentFlagged());
-                this.shouldRatingbeUpdated = false;
+
+            graph = (GraphView) findViewById(R.id.graph);
+            DataPoint dp[] = new DataPoint[student.getSem()];
+            graph.setTitle("Semester wise performance");
+            graph.setTitleTextSize(44);
+
+            for (int i = 0; i < student.getSem(); i++) {
+                if(i<field.length)
+                    dp[i] = new DataPoint(i, field[i]);
+                else
+                    dp[i] = new DataPoint(i, 0);
+
+                Log.d(TAG, "field["+i+"]= "+field[i]);
             }
+            series = new BarGraphSeries<>(dp);
+            graph.removeAllSeries();
+
+            graph.addSeries(series);
+            graph.setVisibility(View.VISIBLE);
+            series.setDrawValuesOnTop(true);
+            series.setValuesOnTopColor(Color.BLACK);
+            series.setSpacing(10);
+
+            graph.getViewport().setMinX(-1);
+            graph.getViewport().setMaxX(student.getSem());
+
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(5);
+
+            graph.getViewport().setYAxisBoundsManual(true);
+            graph.getViewport().setXAxisBoundsManual(true);
+            graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
+//            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.VERTICAL);
+            graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
+
+            graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
+            graph.getGridLabelRenderer().setNumVerticalLabels(5);
+            graph.getGridLabelRenderer().setHorizontalAxisTitle("Semesters");
+            graph.getGridLabelRenderer().setVerticalAxisTitle("Performance on a scale of 5");
+            graph.getGridLabelRenderer().setHorizontalAxisTitleTextSize(34);
+            graph.getGridLabelRenderer().setVerticalAxisTitleTextSize(34);
 
 
-            this.studentImage = extras.getString(mentorTable.column9);
-            if (this.studentImage != null) {
-                this.defaultImage = false;
-            }
-            Log.d(this.TAG, "defaultImageStatus in fromMentor = " + this.defaultImage);
-            this.from = "mentor";
-        } else {
-            username = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).getString(getString(R.string.user_name), EnvironmentCompat.MEDIA_UNKNOWN);
-            this.studentImage = getSharedPreferences("img_store", 0).getString("img_stud", "null");
-            Log.d(this.TAG, "getting studentImage from SharedPreferences = " + this.studentImage);
-            if (!this.studentImage.equals("null")) {
-                this.defaultImage = false;
-            }
-            Log.d(this.TAG, "defaultImageStatus in getData(extras==null) = " + this.defaultImage);
-        }
-        if(from.equals("login")) {
-            Log.d(TAG, username + extras);
-            sbg.execute(username, mPort);
-            Log.d(TAG, "Started on progresUpdate");
-            sbg.onProgressUpdate();
+            graph.getGridLabelRenderer().setLabelFormatter(new LabelFormatter() {
 
-            if (sbg.result.equals("NO Net") || sbg.result.equals("Error.studentHome.php")) {
-
-
-                SharedPreferences sharedPreferences2 = getApplicationContext().getSharedPreferences("StudResult", Context.MODE_PRIVATE);
-                tempResult = sharedPreferences2.getString("HomeStuff", "");
-                student = new Student(sharedPreferences2.getString("HomeStuff", ""));
-
-
-            } else {
-                tempResult = sbg.result;
-                student = new Student(sbg.result);
-                SharedPreferences settings = getSharedPreferences("StudResult", MODE_PRIVATE);
-
-                // Writing data to SharedPreferences
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString("HomeStuff", tempResult);
-                editor.apply();
-
-                // Reading from SharedPreferences
-                String value = settings.getString("key", "");
-                Log.d(TAG, value + tempResult);
-            }
-        }
-        if (this.tempResult != null) {
-            this.arr = this.tempResult.split("<br>");
-            if (arr.length != 1) {
-                this.sid = this.arr[0];
-                if (this.from.equals(Event.LOGIN) && this.justLoggedIn) {
-                    getImage();
-                    Log.d(this.TAG, "Getting Image");
-                    this.justLoggedIn = false;
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX)
+                        return  (((int)value)/2+1) + "-" +(((int)value)%2+1);
+                    return value + "";
                 }
 
-                this.mentor_fields = this.arr[9].split("~");
-                Log.d(this.TAG, "mentor fields String: " + this.mentor_fields[0]);
-                return;
+                @Override
+                public void setViewport(Viewport viewport) {
+
+                }
+            });
+            series.setAnimated(true);
+            series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+                @Override
+                public int get(DataPoint data) {
+                    switch ((int) data.getY()) {
+                        case 1:
+                            return Color.rgb(255, 0, 0);
+                        case 2:
+                            return Color.rgb(255, 100, 0);//return Color.rgb(255, 153, 102);
+                        case 3:
+                            return Color.rgb(200, 100, 100);
+                        case 4:
+                            return Color.rgb(200, 200, 100);//return Color.rgb(0,255,255);
+                        case 5:
+                            return Color.rgb(0, 200, 0);
+
+
+                        default:
+                            return Color.rgb(255, 255, 255);
                     }
                 }
 
-    }
+            });
+        } else {
+            TextView NoGraphTV = (TextView)findViewById(R.id.NoGraph);
+            NoGraphTV.setText("\n Not graded");
 
-
-
-    void setCircularImage() {
-        if (!this.defaultImage) {
-            ((CircleImageView) findViewById(R.id.circ_img)).setImageBitmap(decodeBase64(this.studentImage));
-            Log.d(this.TAG, "getImage done");
         }
     }
 
-    void setProfile() {
-        ((TextView) findViewById(R.id.ht_noRight)).setText(this.sid);
-        ((TextView) findViewById(R.id.nameRight)).setText(student.getName());
-        ((TextView) findViewById(R.id.parentNameRight)).setText(student.getParentName());
-        ((TextView) findViewById(R.id.class_idRight)).setText(student.getYear() + BuildConfig.FLAVOR);
-        Log.d(this.TAG, "defaultImageStatus in setProfile = " + this.defaultImage);
-        setCircularImage();
-        ((TextView) findViewById(R.id.branchRight)).setText(student.getDepartment());
-        ((TextView) findViewById(R.id.sectionRight)).setText(String.valueOf(student.getSection()));
-        ((TextView) findViewById(R.id.semRight)).setText((student.getSem() % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
-        Log.d(this.TAG, "setProfile isStudentFlagged = " + student.isStudentFlagged());
-        final CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
-        cb.setChecked(student.isStudentFlagged());
-        Log.d(this.TAG, this.sid);
-        if (!this.sid.equalsIgnoreCase("14BD1A052X")) {
-            ((TextView) findViewById(R.id.parentNoLeft)).setVisibility(View.INVISIBLE);
-            ((TextView) findViewById(R.id.parentNoRight)).setVisibility(View.INVISIBLE);
-        }
-        if (this.from.equals(Event.LOGIN)) {
-            cb.setVisibility(View.INVISIBLE);
-            ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.VISIBLE);
-        } else if (this.from.equals("mentor")) {
-            if (!student.getOTP().equals("1")) {
-                ((LinearLayout) findViewById(R.id.otpLayout)).setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.OTPRight)).setText(student.getOTP());
-            }
-            cb.setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.INVISIBLE);
-        }
-        cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d(StudentHome.this.TAG, "isStudentFlagged = " + cb.isChecked());
-                student.setStudentFlagged(cb.isChecked());
-                StudentHome studentHome = StudentHome.this;
-                localStruct kmit_mentoring_localStruct = new localStruct();
-                kmit_mentoring_localStruct.getClass();
-                studentHome.db_obj = new localStruct().new localDB(StudentHome.this.getApplicationContext());
-                StudentHome.this.db = StudentHome.this.db_obj.getWritableDatabase();
-                String val = student.isStudentFlagged() ? "1" : "0";
-                ContentValues values = new ContentValues();
-                values.put(mentorTable.column8, val);
-                Log.d(StudentHome.this.TAG, "db.update val = " + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + StudentHome.this.sid + "'", null));
-                Log.d(StudentHome.this.TAG, "isStudentFlagged is updated to the local as" + values);
 
 
 
 
 
-
-            }
-        });
-    }
+//BackgroundHelperMethods
 
     String getLoginStatus() {
         String port = getString(R.string.connection_string);
         this.scbg = new statusCheckBG(this);
-        this.scbg.execute(new String[]{port, this.sid});
-        this.scbg.onProgressUpdate(new Void[0]);
+        this.scbg.execute(port, student.getSid());
+        this.scbg.onProgressUpdate();
+        Log.d(this.TAG, "scbg.result" + this.scbg.result);
         if (!this.scbg.result.matches("NO NET")) {
             return this.scbg.result;
         }
-        Log.d(this.TAG, "scbg.result" + this.scbg.result);
         Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
         Log.d(this.TAG, "Just before return");
         return null;
     }
-
     public String getIMEI(Context context) {
         return ((TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE)).getDeviceId();
     }
 
+
+
+
+//Events and Actions
+
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(this.TAG, "Reached in Student");
         super.onCreate(savedInstanceState);
-        testFlag=true;
+        mPort = getString(R.string.connection_string);
         getData();
-        Log.d("Rajni","StudentFlagged in onCreate"+student.isStudentFlagged());
-        if (this.tempResult != null && this.arr.length != 1) {
-            BottomBar bottomBar;
+
+        if (student!=null) {
             setContentView(R.layout.student_homepage);
-            mPort = getString(R.string.connection_string);
+            mDashboardView = findViewById(R.id.student_dashboard);
+            mSetRemarksView = findViewById(R.id.RemarkView);
+            mViewPerformanceView = findViewById(R.id.view_performance);
+            mViewRemarksView= findViewById(R.id.view_remarks);
+            mChangePasswordView = findViewById(R.id.view_change_password);
+
             this.mentorNameTV = (TextView) findViewById(R.id.mentorName);
             final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
-            toolbar.setTitle((CharSequence) "My Attendance");
+            toolbar.setTitle("My Attendance");
             toolbar.setTitleTextColor(Color.GRAY);
+
             final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             if (this.from.equals(Event.LOGIN)) {
                 navigationView.getMenu().getItem(0).setVisible(true);
@@ -1149,7 +1168,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     textView.setVisibility(View.VISIBLE);
                 }
             });
-            Log.d(TAG,from + "printing from!");
             if (this.from.equals("mentor")) {
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_mentor);
                 bottomBar.setVisibility(View.VISIBLE);
@@ -1158,48 +1176,38 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 }
             } else {
                 bottomBar = (BottomBar) findViewById(R.id.bottomBar_student);
-                Log.d(TAG,"Reaching this line");
                 if(bottomBar!=null)
-                bottomBar.setVisibility(View.VISIBLE);
+                    bottomBar.setVisibility(View.VISIBLE);
             }
 
             bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
                 @Override
                 public void onTabSelected(@IdRes int tabId) {
                     switch (tabId) {
-                        case R.id.tab_student_dashboard /*2131689762*/:
-                            Log.d(TAG,"Setting area for dashBoard!");
-                            toolbar.setTitle((CharSequence) "DashBoard");
+                        case R.id.tab_student_dashboard :
+                            toolbar.setTitle("DashBoard");
                             StudentHome.this.setAreaFor(R.id.student_dashboard);
                             StudentHome.this.setProfile();
-                            StudentHome.this.getAttGraph(StudentHome.this.Attendance);
+                            StudentHome.this.getAttGraph(student.getAttendance());
                             break;
-                        case R.id.tab_view_remarks /*2131689763*/:
+                        case R.id.tab_view_remarks:
 
-                            /*ProgressDialog pd = ProgressDialog.show(StudentHome.this, "Loading Remarks", "Retrieving from database");
-                            pd.setProgressStyle(1);*/
-                            Log.d(TAG,student.toString());
-//                            StudentHome.this.getData();
-                            Log.d(TAG,student.toString());
-                            toolbar.setTitle((CharSequence) "Attendance & Remarks");
+                            toolbar.setTitle("Attendance & Remarks");
                             StudentHome.this.setAreaFor(R.id.view_remarks);
                             StudentHome.this.getRemarks();
                             StudentHome.this.getRemarks();
-
                             break;
-                        case R.id.tab_performance /*2131689764*/:
-                            toolbar.setTitle((CharSequence) "Performance");
+                        case R.id.tab_performance :
+                            toolbar.setTitle("Performance");
                             StudentHome.this.setAreaFor(R.id.view_performance);
                             StudentHome.this.showPerformance();
                             StudentHome.this.showAcadValue();
-                            Log.d(StudentHome.this.TAG, "Button Clicked");
                             break;
-                        case R.id.tab_set_remarks /*2131689765*/:
-                            toolbar.setTitle((CharSequence) "Set Remarks");
+                        case R.id.tab_set_remarks :
+                            toolbar.setTitle("Set Remarks");
                             StudentHome.this.setAreaFor(R.id.RemarkView);
                             StudentHome.this.findViewById(R.id.RemarkView).setVisibility(View.VISIBLE);
                             StudentHome.this.nav_SetRemark();
-                            Log.d(StudentHome.this.TAG, "Button Clicked");
                             break;
                         default:
                     }
@@ -1212,8 +1220,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     }
                     if (StudentHome.this.getLoginStatus() != null) {
                         StudentHome.this.LoggedInDevices = StudentHome.this.getLoginStatus().split(",");
-                        if (StudentHome.this.getLoginStatus().indexOf(StudentHome.this.getIMEI(StudentHome.this)) < 0) {
-                            Toast.makeText(StudentHome.this, "You are logged out from " + StudentHome.this.sid, Toast.LENGTH_SHORT).show();
+                        if (!StudentHome.this.getLoginStatus().contains(StudentHome.this.getIMEI(StudentHome.this))) {
+                            Toast.makeText(StudentHome.this, "You are logged out from " + student.getSid(), Toast.LENGTH_SHORT).show();
                             StudentHome.this.onLogout();
                             return;
                         } else if (StudentHome.this.LoggedInDevices.length > 0) {
@@ -1229,34 +1237,15 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }, 5000);
         }
     }
-
-    void showPerformance() {
-        this.adapter = ArrayAdapter.createFromResource(this, R.array.fieldList, android.R.layout.simple_spinner_dropdown_item);
-        this.adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        this.sp = (Spinner) findViewById(R.id.spinner_perf);
-        this.sp.setAdapter(this.adapter);
-        this.sp.setOnItemSelectedListener(new OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
-                ((TextView) parent.getChildAt(0)).setTextSize(18.0f);
-                if (((int) parent.getItemIdAtPosition(position)) > 0) {
-                    ((TextView) StudentHome.this.findViewById(R.id.NoGraph)).setVisibility(View.INVISIBLE);
-                    if (position <= 7) {
-                        StudentHome.this.getFieldGraph(((int) parent.getItemIdAtPosition(position)) - 1);
-                    } else {
-                        StudentHome.this.getSemAcadGraph();
-                    }
-                }
-            }
-
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-        Log.d(this.TAG, "acadAggr before acadGraph = " + student.getAcadAggr() + BuildConfig.FLAVOR);
-        getAcadGraph(student.getAcadAggr());
-        getAggrGraph();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2) {
+            student.setRatingBarResultString(data.getStringExtra("Rating String"));
+            student.setRatingSubmittable(Boolean.parseBoolean(data.getStringExtra("isSubmittable")));
+            Log.d(this.TAG, "onActivityResult isRatingSubmittable: " + student.isRatingSubmittable());
+            updateRatingToLocal();
+        }
     }
-
     public void onBackPressed() {
         if (!this.ExitFlag) {
             this.ExitFlag = true;
@@ -1275,28 +1264,28 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             startActivity(startMain);
         }
     }
-
     protected void onDestroy() {
         Process.killProcess(Process.myPid());
         super.onDestroy();
     }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
     void onLogout() {
         Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
         editor.remove("username");
         editor.remove("login_status");
         editor.commit();
+        LogoutBG lbg = new LogoutBG(this);
+        lbg.execute(getString(R.string.connection_string), student.getSid(),getIMEI(this));
+        lbg.onProgressUpdate(new Void[0]);
         getApplicationContext().getSharedPreferences("img_store", 0).edit().clear().commit();
         Log.d(this.TAG, "Shared Preferences are cleared");
-        this.issharedPreferencesEmpty = true;
+
+        this.isSharedPreferencesEmpty = true;
         startActivity(new Intent(this, MainActivity.class));
     }
-
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         getData();
@@ -1318,19 +1307,19 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 alertDialog.setButton(-1, "All Devices", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        lbg.execute(new String[]{port, StudentHome.this.sid});
+                        lbg.execute(port, student.getSid());
 
                     }
                 });
                 alertDialog.setButton(-2, "Current Device", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        lbg.execute(new String[]{port, StudentHome.this.sid, StudentHome.this.getIMEI(StudentHome.this)});
+                        lbg.execute(port, student.getSid(), StudentHome.this.getIMEI(StudentHome.this));
 
                     }
                 });
                 if (this.LoggedInDevices == null || this.LoggedInDevices.length <= 1) {
-                    lbg.execute(new String[]{port, this.sid});
+                    lbg.execute(port, student.getSid());
                 } else {
                     alertDialog.show();
                     Log.d(this.TAG, "Dialog shown");
@@ -1357,7 +1346,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
         return true;
     }
-
     public void onClick(View v) {
         if (v.getId() == R.id.link_change_password) {
             setAreaFor(R.id.view_change_password);
@@ -1369,7 +1357,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         } else if (v.getId() == R.id.link_back) {
             setAreaFor(R.id.student_dashboard);
             setProfile();
-            getAttGraph(this.Attendance);
+            getAttGraph(student.getAttendance());
         } else if (v.getId() == R.id.UpdateToServerStudentSide) {
             Log.d(this.TAG, "Update To server Clicked");
             Button b = (Button) findViewById(R.id.UpdateToServerStudentSide);
@@ -1378,9 +1366,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             if (new UpdateData(this, getString(R.string.connection_string), this.mentor_id,student.getSem()).UpdateToServer()) {
                 Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(this, MentorHome.class);
-                i.putExtra("coming_from", this.sid);
+                i.putExtra("coming_from", student.getSid());
                 Editor editor = getApplicationContext().getSharedPreferences("from_student", 0).edit();
-                editor.putString("from_sid", this.sid);
+                editor.putString("from_sid", student.getSid());
                 editor.commit();
                 startActivity(i);
                 return;

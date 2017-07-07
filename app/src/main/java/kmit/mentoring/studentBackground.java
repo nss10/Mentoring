@@ -46,6 +46,7 @@ public class studentBackground extends AsyncTask<String,Void,String> {
             bufferedWriter.flush();
             bufferedWriter.close();
             outputStream.close();
+            Log.d(TAG,post_data);
             InputStream inputStream=s_httpURLConnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
             result="";

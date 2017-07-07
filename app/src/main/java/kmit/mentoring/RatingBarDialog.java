@@ -66,11 +66,12 @@ public class RatingBarDialog extends Activity {
                     for (int i = 0; i < ratingBarIdList.length; i++)
                         changeInteractionMode(i);
                     Button saveButton = (Button) findViewById(R.id.saveButton);
-                    saveButton.setVisibility(View.VISIBLE);
+                    if(!isRatingSubmittable)
+                        saveButton.setVisibility(View.VISIBLE);
                     Button submitButton = (Button) findViewById(R.id.submitButton);
                     submitButton.setVisibility(View.VISIBLE);
                     Button backButton = (Button) findViewById(R.id.backButton);
-                    backButton.setVisibility(View.INVISIBLE);
+                    backButton.setVisibility(View.GONE);
 
                 }
             });
@@ -81,9 +82,9 @@ public class RatingBarDialog extends Activity {
                     for (int i = 0; i < ratingBarIdList.length; i++)
                         changeInteractionMode(i);
                     Button saveButton = (Button) findViewById(R.id.saveButton);
-                    saveButton.setVisibility(View.INVISIBLE);
+                    saveButton.setVisibility(View.GONE);
                     Button submitButton = (Button) findViewById(R.id.submitButton);
-                    submitButton.setVisibility(View.INVISIBLE);
+                    submitButton.setVisibility(View.GONE);
                     Button backButton = (Button) findViewById(R.id.backButton);
                     backButton.setVisibility(View.VISIBLE);
 
@@ -100,7 +101,7 @@ public class RatingBarDialog extends Activity {
                 Button submitButton = (Button) findViewById(R.id.submitButton);
                 submitButton.setVisibility(View.VISIBLE);
                 Button backButton = (Button) findViewById(R.id.backButton);
-                backButton.setVisibility(View.INVISIBLE);
+                backButton.setVisibility(View.GONE);
             }
             else
             {

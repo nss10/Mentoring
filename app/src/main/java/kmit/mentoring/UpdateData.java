@@ -57,7 +57,7 @@ public class UpdateData {
             Log.d(this.TAG, "here we go isRatingSubmittable - "+ sid +"-" + rating + "sem = " + studentSem);
         }
         mbgToInsertData kmit_mentoring_mbgToInsertData = new mbgToInsertData(this.context);
-        Log.d(this.TAG, rating);
+        Log.d(this.TAG, remarks);
         kmit_mentoring_mbgToInsertData.execute(new String[]{this.port, this.username, sid, remarks, date, rating, isRatingSubmittable, this.studentSem +"", isStudentFlagged});
         kmit_mentoring_mbgToInsertData.onProgressUpdate(new Void[0]);
         Log.d(this.TAG,"printing Result - "+  kmit_mentoring_mbgToInsertData.result);
@@ -65,7 +65,6 @@ public class UpdateData {
             Toast.makeText(this.context, "NO NET", Toast.LENGTH_LONG).show();
             return false;
         }
-        Toast.makeText(this.context, "Data Updated and logged out", Toast.LENGTH_SHORT).show();
         return true;
     }
 

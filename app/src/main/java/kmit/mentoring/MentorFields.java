@@ -2,6 +2,7 @@ package kmit.mentoring;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.Arrays;
 
@@ -14,6 +15,7 @@ public class MentorFields implements Parcelable {
 
     private int[] gd,cs,grooming,bwp,bwf,cca,eca,aggr;
     private String [] tempArr;
+    private final String TAG="MentorFields";
 
     public MentorFields() {
     }
@@ -68,7 +70,7 @@ public class MentorFields implements Parcelable {
             eca[i] = Integer.parseInt(tempArr[i]);
 
 
-
+        Log.d(TAG,tempMfArr[6]);
         tempArr = tempMfArr[7].split(",");
         aggr = new int[tempArr.length];
         for(int i = 0;i<tempArr.length;i++)
@@ -112,6 +114,21 @@ public class MentorFields implements Parcelable {
         return aggr;
     }
 
+    public int[] getFieldArray(int fieldVal)
+    {
+        switch(fieldVal)
+        {
+            case 0: return getGd();
+            case 1 : return getCs();
+            case 2: return getGrooming();
+            case 3 : return getBwp();
+            case 4: return getBwf();
+            case 5 : return getCca();
+            case 6: return getEca();
+            default: return null;
+
+        }
+    }
     @Override
     public String toString() {
         return "MentorFields{" +

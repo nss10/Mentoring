@@ -157,21 +157,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/saveButton"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <Button
         android:text="Submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/submitButton"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <Button
         android:text="Back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/backButton"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 
 </LinearLayout>

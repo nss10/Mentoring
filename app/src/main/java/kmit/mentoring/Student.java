@@ -21,16 +21,17 @@ public class Student implements Parcelable {
     private int year;
     private String department;
     private char section;
-    private char division='\0';
     private int sem;
     private String eMail;
     private String phone;
+    private String studentImage;
     private double attendance;
     private double acadArr[];
     private double acadAggr;
     private boolean isStudentFlagged;
-    private boolean isRatingSubmittable;
     private String OTP;
+    private String ratingBarResultString;
+    private boolean isRatingSubmittable;
     private ArrayList<Remark> remarkList,new_remarkList;
     private MentorFields mentorFields;
 
@@ -51,10 +52,11 @@ public class Student implements Parcelable {
 
         sid = listData[0];
 
-        String nameParentOtpTriplet[] = listData[1].split("&&");
-        name = nameParentOtpTriplet[0];
-        parentName = nameParentOtpTriplet[1];
-        OTP=nameParentOtpTriplet[2];
+        String nameParentOtpPhnoQuad[] = listData[1].split("&&");
+        name = nameParentOtpPhnoQuad[0];
+        parentName = nameParentOtpPhnoQuad[1];
+        OTP=nameParentOtpPhnoQuad[2];
+        phone = nameParentOtpPhnoQuad[3];
 
         String classIdSemPair[] = listData[2].split("&&");
         year = Integer.parseInt(String.valueOf(classIdSemPair[0].charAt(0)));
@@ -87,7 +89,9 @@ public class Student implements Parcelable {
                 remarkList.add(new Remark(tempRemarkArr[i],tempDateArr[i]));
         }
 
-        mentorFields = new  MentorFields(listData[9]);
+        Log.d("Rajni",sid + listData[9]);
+        if(!listData[9].equalsIgnoreCase("Not graded"))
+            mentorFields = new  MentorFields(listData[9]);
 
 
 
@@ -116,8 +120,7 @@ public class Student implements Parcelable {
         return inputString;
     }
 
-    public int[] getCurMF()
-    {
+    public int[] getCurMF()    {
         curMF = new int[7];
         try
         {
@@ -140,15 +143,13 @@ public class Student implements Parcelable {
 
     }
 
-    public String getCurMFString()
-    {
+    public String getCurMFString()    {
         String str="";
         for(int i:curMF)
             str=str+i+"~";
 
         return str;
     }
-
 
     public String getSid() {
         return sid;
@@ -177,9 +178,6 @@ public class Student implements Parcelable {
         return section;
     }
 
-    public char getDivision() {
-        return division;
-    }
 
     public int getSem() {
         return sem;
@@ -209,6 +207,10 @@ public class Student implements Parcelable {
         return OTP;
     }
 
+    public String getStudentImage() {
+        return studentImage;
+    }
+
     public ArrayList<Remark> getRemarkList() {
         return remarkList;
     }
@@ -217,17 +219,27 @@ public class Student implements Parcelable {
         return new_remarkList;
     }
 
-    public Remark getCumulativeLocalRemark()
-    {
+    public Remark getCumulativeLocalRemark()    {
        if(new_remarkList==null)
             return null;
 
         String rem_str="";
         String date_str="";
+        boolean isFirst=true;
         for(Remark rem:new_remarkList)
         {
-            rem_str = rem_str + rem.getRemarkString()+"~";
-            date_str = date_str + rem.getDate()+"~";
+            if(isFirst)
+            {
+                rem_str = rem.getRemarkString();
+                date_str =rem.getDate();
+            }
+            else
+            {
+                rem_str = rem_str+rem.getRemarkString() + "~" ;
+                date_str = date_str + rem.getDate() + "~" ;
+            }
+            isFirst=false;
+
         }
 
         return new Remark(rem_str,date_str);
@@ -237,9 +249,16 @@ public class Student implements Parcelable {
         return mentorFields;
     }
 
+
+    public String getRatingBarResultString() {
+        return ratingBarResultString;
+    }
+
     public boolean isRatingSubmittable() {
         return isRatingSubmittable;
     }
+
+
 
   //Setters
     public void setLocalRemarks(String rem_String, String date_string) {
@@ -256,6 +275,10 @@ public class Student implements Parcelable {
             new_remarkList.add(new Remark(tempRemarkArr[i],tempDateArr[i]));
     }
 
+    public void setRatingBarResultString(String ratingBarResultString) {
+        this.ratingBarResultString = ratingBarResultString;
+    }
+
     public void setStudentFlagged(boolean studentFlagged) {
         isStudentFlagged = studentFlagged;
     }
@@ -264,13 +287,9 @@ public class Student implements Parcelable {
         isRatingSubmittable = ratingSubmittable;
     }
 
-
-
-
-
-
-
-
+    public void setStudentImage(String studentImage) {
+        this.studentImage = studentImage;
+    }
 
     @Override
     public String toString() {
@@ -282,7 +301,6 @@ public class Student implements Parcelable {
                 ", year=" + year +
                 ", department='" + department + '\'' +
                 ", section=" + section +
-                ", division=" + division +
                 ", sem=" + sem +
                 ", eMail='" + eMail + '\'' +
                 ", phone='" + phone + '\'' +
@@ -310,10 +328,10 @@ public class Student implements Parcelable {
         dest.writeInt(this.year);
         dest.writeString(this.department);
         dest.writeInt(this.section);
-        dest.writeInt(this.division);
         dest.writeInt(this.sem);
         dest.writeString(this.eMail);
         dest.writeString(this.phone);
+        dest.writeString(this.ratingBarResultString);
         dest.writeDouble(this.attendance);
         dest.writeDoubleArray(this.acadArr);
         dest.writeByte(this.isStudentFlagged ? (byte) 1 : (byte) 0);
@@ -322,6 +340,7 @@ public class Student implements Parcelable {
         dest.writeList(this.new_remarkList);
         dest.writeParcelable(this.mentorFields, flags);
         dest.writeString(this.inputString);
+        dest.writeString(this.studentImage);
         dest.writeIntArray(this.curMF);
     }
 
@@ -333,10 +352,10 @@ public class Student implements Parcelable {
         this.year = in.readInt();
         this.department = in.readString();
         this.section = (char) in.readInt();
-        this.division = (char) in.readInt();
         this.sem = in.readInt();
         this.eMail = in.readString();
         this.phone = in.readString();
+        this.ratingBarResultString = in.readString();
         this.attendance = in.readDouble();
         this.acadArr = in.createDoubleArray();
         this.isStudentFlagged = in.readByte() != 0;
@@ -347,6 +366,7 @@ public class Student implements Parcelable {
         in.readList(this.new_remarkList, Remark.class.getClassLoader());
         this.mentorFields = in.readParcelable(MentorFields.class.getClassLoader());
         this.inputString = in.readString();
+        this.studentImage = in.readString();
         this.curMF = in.createIntArray();
     }
 

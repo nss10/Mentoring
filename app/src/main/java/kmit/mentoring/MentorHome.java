@@ -28,6 +28,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLayoutChangeListener;
@@ -44,6 +45,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import kmit.mentoring.localStruct.localDB;
 import kmit.mentoring.localStruct.mentorTable;
@@ -131,6 +133,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
                 MentorHome.this.db = MentorHome.this.db_obj.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put(mentorTable.column9, this.img_str);
+                imageWarehouse.imageMap.put(val$sid ,this.img_str);
                 Log.d(MentorHome.this.TAG, MentorHome.this.db.update(mentorTable.table_name, values, "ht_no='" + this.val$sid + "'", null) + " row(s) affected");
                 Log.d(MentorHome.this.TAG, this.val$sid + " image updated to localdb where " + mentorTable.column1 + "='" + this.val$sid + "'");
             }
@@ -220,7 +223,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         mbg.onProgressUpdate();
         Log.d(this.TAG, "indexOfEOF :<" + mbg.result + ">");
         while (mbg.result.indexOf("E.O.F") < 0) {
-            Log.d(this.TAG, "result :<" + this.result + ">");
+            //Log.d(this.TAG, "result :<" + this.result + ">");
+
             if (mbg.result.matches("NO NET")) {
                 Toast.makeText(this, "NO NET", Toast.LENGTH_SHORT).show();
                 return;
@@ -264,10 +268,14 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
 
     }
     void UpdateToServer() {
+        Log.d(TAG,"Time begins here");
+
         String port = getString(R.string.connection_string);
         getDataFromLocal();
         Log.d(TAG,"StudentSeminUpdatetosServer = "+ studentSem);
         this.isDataUpdated = new UpdateData(this, port, this.username, this.studentSem).UpdateToServer();
+        Log.d(TAG,"Time ends here");
+
     }
 
 
@@ -337,6 +345,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         }
     }
     void selectStudent(Cursor c, String state) {
+        String sid = c.getString(c.getColumnIndex(mentorTable.column1));
         String res_str = c.getString(c.getColumnIndex(mentorTable.column3));
         String new_rem = c.getString(c.getColumnIndex(mentorTable.column4));
         String new_date = c.getString(c.getColumnIndex(mentorTable.column5));
@@ -344,6 +353,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         String isRatingSubmittable = c.getString(c.getColumnIndex(mentorTable.column7));
         String isStudentFlagged = c.getString(c.getColumnIndex(mentorTable.column8));
         String studentImage = c.getString(c.getColumnIndex(mentorTable.column9));
+//        String studentImage = imageWarehouse.imageMap.get(sid);
 
         if (isStudentFlagged == null) {
             isStudentFlagged = "0";
@@ -385,6 +395,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         this.loginStatus = sharedPreferences.getString(getString(R.string.just_logged_in), EnvironmentCompat.MEDIA_UNKNOWN);
         this.username = sharedPreferences.getString(getString(R.string.user_name), EnvironmentCompat.MEDIA_UNKNOWN);
         setContentView(R.layout.mentor_homepage);
+        if(imageWarehouse.imageMap==null)
+            imageWarehouse.imageMap = new HashMap();
         mPort = getString(R.string.connection_string);
         Log.d(this.TAG, "Mentor created~" + savedInstanceState);
         if (this.loginStatus.matches("true")) {
@@ -460,16 +472,31 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         }
         final Button b = (Button) findViewById(R.id.UpdateToServer);
         b.setHovered(true);
+
         b.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 b.setClickable(false);
+                MentorHome.this.loading = ProgressDialog.show(MentorHome.this, "Updating data to the server...", null, true, true);
+                loading.setCancelable(false);
                 b.setText("Data Updating...");
-                MentorHome.this.getDataFromLocal();
-                Log.d(TAG,"ButtonClicked -> UpdateToServer");
-                MentorHome.this.UpdateToServer();
-                MentorHome.this.getDataFromServer();
-                MentorHome.this.UIonDataUpdate();
+
+
+                new Handler().postDelayed(new Runnable(){
+                    public void run()
+                    {
+
+                        Log.d(TAG,"ButtonClicked -> UpdateToServer");
+                        MentorHome.this.UpdateToServer();
+                        MentorHome.this.getDataFromServer();
+                        MentorHome.this.UIonDataUpdate();
+                        if(loading!=null)
+                            MentorHome.this.loading.dismiss();
+
+                    }
+                },1000);
+
+
             }
         });
         if (this.hasInternet) {
@@ -501,6 +528,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             editor.remove("login_status");
             editor.remove("image_stud");
             editor.commit();
+            imageWarehouse.imageMap = null; //emptying the images
             LogoutBG lbg = new LogoutBG(this);
             lbg.execute(getString(R.string.connection_string), this.username);
             lbg.onProgressUpdate(new Void[0]);
@@ -553,5 +581,14 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         }
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
         return true;
+    }
+
+
+    public class UpdateToServerRoutine extends AsyncTask<Void,Void,Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
     }
 }

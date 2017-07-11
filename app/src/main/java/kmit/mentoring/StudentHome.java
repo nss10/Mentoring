@@ -711,8 +711,17 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         series.setAnimated(true);
         graph.getViewport().setMinX(1);
         graph.getViewport().setMaxX(1.4);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(100);
+        if(Integer.parseInt(student.getSid().substring(0,2))>=16)
+        {
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(10);
+        }
+        else
+        {
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(100);
+        }
+
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setXAxisBoundsManual(true);
 
@@ -925,12 +934,12 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         graph = null;
 
-
+        int acadCount = student.getAcadArr().length;
         graph = (GraphView) findViewById(R.id.graph);
-        DataPoint dp[] = new DataPoint[student.getSem()];
+        DataPoint dp[] = new DataPoint[acadCount];
         graph.setTitle("Semester wise performance");
         graph.setTitleTextSize(44);
-        for (int i = 0; i < student.getSem(); i++) {
+        for (int i = 0; i < acadCount; i++) {
 
             dp[i] = new DataPoint(i, student.getAcadArr()[i]);
             Log.d(TAG, student.getAcadArr()[i] + "");
@@ -947,13 +956,23 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         graph.getViewport().setMinX(-1);
         graph.getViewport().setMaxX(student.getSem());
 
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(100);
+        if(Integer.parseInt(student.getSid().substring(0,2))>=16)
+        {
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(10);
+            graph.getGridLabelRenderer().setVerticalAxisTitle("GPA 0-10");
+        }
+        else
+        {
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(100);
+            graph.getGridLabelRenderer().setVerticalAxisTitle("Percentage 0-100");
+        }
+
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getGridLabelRenderer().setNumHorizontalLabels(student.getSem());
         graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
-        graph.getGridLabelRenderer().setVerticalAxisTitle("Performance on a scale of 100");
 
         series.setAnimated(true);
         graph.getGridLabelRenderer().setLabelFormatter(new LabelFormatter() {

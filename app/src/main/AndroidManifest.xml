@@ -25,6 +25,8 @@
         <activity android:name=".SetRemarks"/>
         <activity android:name=".mentorlogin"/>
         <activity android:name=".register"/>
+        <activity android:name=".createPassword"/>
+
 
         <activity android:name=".RatingBarDialog"
                   android:theme="@android:style/Theme.Dialog"

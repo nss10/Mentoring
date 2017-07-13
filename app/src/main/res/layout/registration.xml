@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:background="@drawable/whitebg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:background="@drawable/whitebg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:id="@+id/slabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            android:text="STUDENT REGISTRATION"
+            android:layout_below="@id/imageView3"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:gravity="center_vertical"
+            android:id="@+id/sid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:hint="Enter your JNTU Roll number"
+            android:ems="10"
+            android:textAlignment="center"
+            android:layout_below="@id/slabel"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="false"
+            android:inputType="text" />
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/kmitpng"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:layout_gravity="top"
+            android:id="@+id/get_otp"
+            android:background="@drawable/shape"
+            android:padding="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:text="GET OTP"
+            android:layout_below="@id/sid"
+            android:layout_centerHorizontal="true" />
+
+
+        <Button
+            android:textSize="20sp"
+            android:id="@+id/back_to_main"
+            android:padding="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:text="Back"
+            android:layout_below="@id/get_otp"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:id="@+id/otp"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="One Time Password"
+            android:ems="10"
+            android:layout_alignBaseline="@id/sid"
+            android:layout_alignBottom="@id/sid"
+            android:layout_alignParentLeft="true"
+            android:inputType="text" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/get_otp"
+            android:layout_alignParentLeft="true">
+
+            <Button
+                android:id="@+id/resend_otp"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resend OTP" />
+
+        </TableRow>
+
+        <Button
+            android:id="@+id/confirm_otp"
+            android:paddingLeft="50sp"
+            android:paddingRight="50sp"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirm OTP"
+            android:layout_alignBaseline="@+id/get_otp"
+            android:layout_alignBottom="@+id/get_otp"
+            android:layout_alignRight="@+id/imageView3"
+            android:layout_alignEnd="@+id/imageView3" />
+    </RelativeLayout>
+</ScrollView>

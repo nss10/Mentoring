@@ -267,15 +267,18 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         ((TextView) findViewById(R.id.branchRight)).setText(student.getDepartment());
         ((TextView) findViewById(R.id.sectionRight)).setText(String.valueOf(student.getSection()));
         ((TextView) findViewById(R.id.semRight)).setText((student.getSem() % 2 == 0 ? 2 : 1) + BuildConfig.FLAVOR);
+
+
         ((TextView) findViewById(R.id.parentNoRight)).setText((student.getPhone()));
         Log.d(this.TAG, "setProfile isStudentFlagged = " + student.isStudentFlagged());
         final CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
         cb.setChecked(student.isStudentFlagged());
-        Log.d(this.TAG, student.getSid());
-        /*if (!student.getSid().equalsIgnoreCase("14BD1A052X")) {
+        Log.d(this.TAG, student.getSid()  +":" + student.getPhone() + " : " + student.getPhone().equals("1111111111"));
+
+        if (student.getPhone().equals("1111111111")) {
             ((TextView) findViewById(R.id.parentNoLeft)).setVisibility(View.INVISIBLE);
             ((TextView) findViewById(R.id.parentNoRight)).setVisibility(View.INVISIBLE);
-        }*/
+        }
         if (this.from.equals(Event.LOGIN)) {
             cb.setVisibility(View.INVISIBLE);
             ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.VISIBLE);
@@ -1279,7 +1282,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         } else {
             Intent startMain = new Intent("android.intent.action.MAIN");
             startMain.addCategory("android.intent.category.HOME");
-            startMain.setFlags(268435456);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(startMain);
         }
     }

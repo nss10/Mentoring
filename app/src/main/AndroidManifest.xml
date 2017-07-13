@@ -21,10 +21,11 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".studentlogin"></activity>
-        <activity android:name=".SetRemarks"
-            ></activity>
-        <activity android:name=".mentorlogin"></activity>
+        <activity android:name=".studentlogin"/>
+        <activity android:name=".SetRemarks"/>
+        <activity android:name=".mentorlogin"/>
+        <activity android:name=".register"/>
+
         <activity android:name=".RatingBarDialog"
                   android:theme="@android:style/Theme.Dialog"
                     />

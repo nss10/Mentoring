@@ -190,14 +190,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.loginButton:
             {
 
-                Log.d(TAG,"Nvas");
                 break;
             }
             case R.id.regbutton:
             {
-                /*Intent i =new Intent(this,register.class);
+                Intent i =new Intent(this,register.class);
                 startActivity(i);
-                break;*/
+                break;
             }
         }
     }

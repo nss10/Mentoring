@@ -25,9 +25,15 @@ public final class localStruct {
             onCreate(db);
         }
 
+        public void storeImagesIntoMap(SQLiteDatabase db) {
+
+        }
+
         public void onLogout(SQLiteDatabase db) {
             db.execSQL(localStruct.SQL_DELETE_ENTRIES);
         }
+
+
     }
 
     public static class mentorTable implements BaseColumns {
@@ -46,5 +52,8 @@ public final class localStruct {
         public mentorTable() {
             this.TAG = "localStruct";
         }
+
+
+
     }
 }

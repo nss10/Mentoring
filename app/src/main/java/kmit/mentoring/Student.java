@@ -55,7 +55,8 @@ public class Student implements Parcelable {
         String nameParentOtpPhnoQuad[] = listData[1].split("&&");
         name = nameParentOtpPhnoQuad[0];
         parentName = nameParentOtpPhnoQuad[1];
-        OTP=nameParentOtpPhnoQuad[2];
+        String OTP_arr[] =nameParentOtpPhnoQuad[2].split(",");
+        OTP = OTP_arr[OTP_arr.length-1];
         phone = nameParentOtpPhnoQuad[3];
 
         String classIdSemPair[] = listData[2].split("&&");

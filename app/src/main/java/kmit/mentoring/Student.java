@@ -95,6 +95,11 @@ public class Student implements Parcelable {
             mentorFields = new  MentorFields(listData[9]);
 
 
+        /*if (!getCurMFString().contains("0"))
+            isRatingSubmittable = true;
+        else
+            isRatingSubmittable = false;*/
+
 
     }
 

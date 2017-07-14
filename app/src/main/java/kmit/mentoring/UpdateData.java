@@ -107,8 +107,9 @@ public class UpdateData {
             this.studentSem = student.getSem();
             values.put(mentorTable.column3, student.getInputString());
             List<int[]> curMFlist = Arrays.asList(student.getCurMF());
+
             values.put(mentorTable.column6, student.getCurMFString());
-            if (curMFlist.contains(0)) {
+            if (student.getCurMFString().contains("0")) {
                 values.put(mentorTable.column7, "0");
             } else {
                 values.put(mentorTable.column7, "1");
@@ -121,7 +122,7 @@ public class UpdateData {
             Log.d(TAG,"col3 " + student.getInputString());
             Log.d(TAG,"col6 " + student.getCurMFString());
             Log.d(TAG,"col7 ");
-            Log.d(TAG,curMFlist.contains("0")?"0":"1");
+            Log.d(TAG,student.getCurMFString().contains("0")?"0":"1");
             Log.d(TAG,"col8 " + (student.isStudentFlagged()?"1":"0"));
             Log.d(TAG,"****************");
         }

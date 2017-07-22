@@ -741,9 +741,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         series.setValueDependentColor(new ValueDependentColor() {
             @Override
             public int get(DataPointInterface data) {
-                if (data.getY() > 70)
+                if (data.getY() > 0.7*(graph.getViewport().getMaxY(true)))
                     return Color.BLUE;
-                else if (data.getY() > 65)
+                else if (data.getY() > 0.65*(graph.getViewport().getMaxY(true)))
                     return Color.rgb(255, 100, 0);
                 else
                     return Color.RED;
@@ -1041,7 +1041,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 else
                     dp[i] = new DataPoint(i, 0);
 
-                Log.d(TAG, "field["+i+"]= "+field[i]);
+                
             }
             series = new BarGraphSeries<>(dp);
             graph.removeAllSeries();

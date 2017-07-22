@@ -83,9 +83,11 @@ public class Student implements Parcelable {
             remarkList=null;
         else
         {
+            Log.d("Rajni",listData[7] + "\n" + listData[8]);
             String tempRemarkArr[] = listData[7].split("~");
             String tempDateArr[] = listData[8].split("~");
             remarkList = new ArrayList<>();
+
             for(int i=0;i<tempRemarkArr.length;i++)
                 remarkList.add(new Remark(tempRemarkArr[i],tempDateArr[i]));
         }

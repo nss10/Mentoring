@@ -518,6 +518,7 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         startActivity(startMain);
     }
     void onLogout(boolean shouldUpdate) {
+
         if (shouldUpdate) {
             UpdateToServer();
         }
@@ -576,7 +577,13 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
                 });
                 break;
             case R.id.logout /*2131689772*/:
-                onLogout(true);
+                MentorHome.this.loading = ProgressDialog.show(MentorHome.this, "Logging out...", "Please wait", true, true);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onLogout(true);
+                    }
+                },1000);
                 break;
         }
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
@@ -584,11 +591,5 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
     }
 
 
-    public class UpdateToServerRoutine extends AsyncTask<Void,Void,Void>
-    {
-        @Override
-        protected Void doInBackground(Void... params) {
-            return null;
-        }
-    }
+
 }

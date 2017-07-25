@@ -11,8 +11,10 @@
             android:icon="@drawable/ic_arrow_back_black_24dp"
             android:title="Back" />
 
-
-
+        <item
+            android:id="@+id/Report_Bug"
+            android:icon="@drawable/ic_bug_report_black_24dp"
+            android:title="REPORT BUG" />
 
     </group>
 

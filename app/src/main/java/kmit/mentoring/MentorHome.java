@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -450,7 +451,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 MentorHome.this.navigationView.removeOnLayoutChangeListener(this);
-                ((TextView) MentorHome.this.navigationView.findViewById(R.id.login_name)).setText("Hello " + MentorHome.this.name);
+                ((TextView) MentorHome.this.navigationView.findViewById(R.id.login_name)).setText("Hello,\n" + MentorHome.this.name);
+                ((TextView) MentorHome.this.navigationView.findViewById(R.id.LoginID)).setText(username.toUpperCase());
             }
         });
         this.editor.commit();
@@ -585,11 +587,17 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
                     }
                 },1000);
                 break;
+            case R.id.Report_Bug:
+                goToUrl("https://goo.gl/forms/LhgsYP4n03M1NkcG2");
         }
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
         return true;
     }
 
-
+    private void goToUrl (String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+    }
 
 }

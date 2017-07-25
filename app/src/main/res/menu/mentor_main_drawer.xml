@@ -10,10 +10,16 @@
             android:id="@+id/change_password"
             android:icon="@drawable/admin"
             android:title="Change Password" />
+
         <item
             android:id="@+id/logout"
             android:icon="@drawable/logout"
             android:title="LOGOUT" />
+
+        <item
+            android:id="@+id/Report_Bug"
+            android:icon="@drawable/ic_bug_report_black_24dp"
+            android:title="REPORT BUG" />
         <!--<item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

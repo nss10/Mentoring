@@ -10,6 +10,10 @@
             android:id="@+id/student"
             android:icon="@drawable/std"
             android:title="STUDENT" />
+        <item
+            android:id="@+id/Report_Bug"
+            android:icon="@drawable/ic_bug_report_black_24dp"
+            android:title="REPORT BUG" />
         <!--<item
             android:id="@+id/admin"
             android:icon="@drawable/admin"

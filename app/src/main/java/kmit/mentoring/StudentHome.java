@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -1279,6 +1280,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }, 2000);
         } else if (this.from.equals("mentor")) {
             startActivity(new Intent(this, MentorHome.class));
+
         } else {
             Intent startMain = new Intent("android.intent.action.MAIN");
             startMain.addCategory("android.intent.category.HOME");
@@ -1365,6 +1367,10 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         } else if (id == R.id.Back) {
             startActivity(new Intent(this, MentorHome.class));
         }
+        else if(id==R.id.Report_Bug)
+        {
+                goToUrl("https://goo.gl/forms/LhgsYP4n03M1NkcG2");
+        }
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START);
         return true;
     }
@@ -1398,5 +1404,11 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             Toast.makeText(this, "NO NET", Toast.LENGTH_LONG).show();
             b.setText("CLICK TO UPDATE TO SERVER");
         }
+    }
+
+    private void goToUrl (String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
     }
 }

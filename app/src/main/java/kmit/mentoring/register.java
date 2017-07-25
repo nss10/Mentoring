@@ -173,7 +173,25 @@ public class register extends Activity {
         this.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                register.this.alertDialog = new Builder(register.this).create();
+                register.this.alertDialog.setTitle("Are you sure?");
+                register.this.alertDialog.setMessage("Do you want to exit the registration process?");
+                register.this.alertDialog.setCancelable(false);
+                register.this.alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                });
+                register.this.alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "NO", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        register.this.alertDialog.dismiss();
+                    }
+                });
+                register.this.alertDialog.show();
+
+
 
             }
         });

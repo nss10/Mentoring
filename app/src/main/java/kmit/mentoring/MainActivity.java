@@ -128,7 +128,10 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            Intent startMain = new Intent("android.intent.action.MAIN");
+            startMain.addCategory("android.intent.category.HOME");
+            startMain.setFlags(268435456);
+            startActivity(startMain);
         }
     }
 
@@ -139,6 +142,11 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void goToUrl (String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
+    }
     /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -167,7 +175,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.student) {
             Intent i=new Intent(this,studentlogin.class);
             startActivity(i);
-        } /*else if (id == R.id.admin) {
+        }
+        else if(id==R.id.Report_Bug) {
+
+            goToUrl("https://goo.gl/forms/LhgsYP4n03M1NkcG2");
+
+        }
+        /*else if (id == R.id.admin) {
             Intent i=new Intent(this, temp.class);
             startActivity(i);
         } else if (id == R.id.nav_manage) {
@@ -175,7 +189,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
-        }*//*
+        }*/
+        /*
 */
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -198,6 +213,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(i);
                 break;
             }
+
         }
     }
     public void EnableRuntimePermission() {

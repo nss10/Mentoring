@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.widget.SimpleCursorAdapter;
+//import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,7 +44,7 @@ public class UpdateData {
         String rating = "";
         String isRatingSubmittable = "";
         String isStudentFlagged = "";
-        Cursor c = db.rawQuery("SELECT " +mentorTable.column1+","+ mentorTable.column4+","+mentorTable.column5+","+mentorTable.column6+","+mentorTable.column7+","+mentorTable.column8+","+mentorTable.column9+","+ "from " + mentorTable.table_name,null);
+        Cursor c = db.rawQuery("SELECT " +mentorTable.column1+","+ mentorTable.column4+","+mentorTable.column5+","+mentorTable.column6+","+mentorTable.column7+","+mentorTable.column8+","+mentorTable.column9 +" from " + mentorTable.table_name,null);
         imageCursor = c;
         c.moveToFirst();
         Log.d(TAG,c.getCount()+"-column count");

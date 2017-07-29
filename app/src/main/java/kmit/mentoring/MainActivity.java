@@ -181,17 +181,8 @@ public class MainActivity extends AppCompatActivity
             goToUrl("https://goo.gl/forms/LhgsYP4n03M1NkcG2");
 
         }
-        /*else if (id == R.id.admin) {
-            Intent i=new Intent(this, temp.class);
-            startActivity(i);
-        } else if (id == R.id.nav_manage) {
-        } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
 
-        }*/
-        /*
-*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

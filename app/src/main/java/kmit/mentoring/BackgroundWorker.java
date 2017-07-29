@@ -50,7 +50,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             String post_data = URLEncoder.encode("user_name", "UTF-8") + "=" + URLEncoder.encode(this.user_name, "UTF-8") + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(this.password, "UTF-8") + "&" + URLEncoder.encode("IMEI", "UTF-8") + "=" + URLEncoder.encode(this.IMEI, "UTF-8");
             bufferedWriter.write(post_data);
-            Log.d(this.TAG, post_data);
+            //Log.d(this.TAG, post_data);
             bufferedWriter.flush();
             bufferedWriter.close();
             outputStream.close();
@@ -63,25 +63,25 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
                 if (str != null) {
                     this.result += str;
                 } else {
-                    Log.d(this.TAG, this.result + " test");
+                    //Log.d(this.TAG, this.result + " test");
                     bufferedReader.close();
                     inputStream.close();
                     httpURLConnection.disconnect();
-                    Log.d(this.TAG, "finally0: " + this.result);
+                    //Log.d(this.TAG, "finally0: " + this.result);
                     return this.result;
                 }
             }
         } catch (MalformedURLException e) {
-            Log.d(this.TAG, "into catch1" + e);
-            Log.d(this.TAG, "finally1: " + this.result);
+            //Log.d(this.TAG, "into catch1" + e);
+            //Log.d(this.TAG, "finally1: " + this.result);
             return this.result;
         } catch (IOException e2) {
-            Log.d(this.TAG, "into catch2:" + e2);
+            //Log.d(this.TAG, "into catch2:" + e2);
             this.result = "NO NET";
-            Log.d(this.TAG, "finally2: " + this.result);
+            //Log.d(this.TAG, "finally2: " + this.result);
             return this.result;
         } catch (Throwable th) {
-            Log.d(this.TAG, "finally3: " + this.result + th);
+            //Log.d(this.TAG, "finally3: " + this.result + th);
             return this.result;
         }
     }
@@ -95,7 +95,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
     protected void onProgressUpdate(Void... values) {
         while (true) {
             if (this.result != null && this.result != BuildConfig.FLAVOR) {
-                Log.d(this.TAG, "out , result : <" + this.result + ">");
+                //Log.d(this.TAG, "out , result : <" + this.result + ">");
                 super.onProgressUpdate(values);
                 return;
             }

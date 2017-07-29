@@ -96,12 +96,12 @@ public class studentlogin extends Activity implements OnClickListener {
             String IMEI = getIMEI(this);
             BackgroundWorker backgroundWorker = new BackgroundWorker(this);
             String port = getString(R.string.connection_string);
-            Log.d(this.TAG, backgroundWorker.getStatus() + "before");
+            //Log.d(this.TAG, backgroundWorker.getStatus() + "before");
             backgroundWorker.execute(new String[]{type, username, password, port, IMEI});
-            Log.d(this.TAG, backgroundWorker.getStatus() + "after1");
+            //Log.d(this.TAG, backgroundWorker.getStatus() + "after1");
             backgroundWorker.onProgressUpdate(new Void[0]);
             AlertDialog alertDialog = new Builder(this).create();
-            Log.d(TAG,backgroundWorker.result);
+            //Log.d(TAG,backgroundWorker.result);
             if (backgroundWorker.result.matches("1")) {
                 Toast.makeText(getApplicationContext(), "login successful " + backgroundWorker.result, Toast.LENGTH_SHORT).show();
                 Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();

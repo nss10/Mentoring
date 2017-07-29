@@ -30,7 +30,7 @@ public class SetRemarks extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_remarks);
-        Log.d(TAG, "Entering the Create");
+        //Log.d(TAG, "Entering the Create");
         Spinner sp = (Spinner) findViewById(R.id.RemarkSpinner);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.RemarkList, android.R.layout.simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -43,13 +43,13 @@ public class SetRemarks extends Activity {
         rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                Log.d(TAG,"Rating Given as " + rating);
+                //Log.d(TAG,"Rating Given as " + rating);
             }
         });
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "Entering the listener" + (int) parent.getItemIdAtPosition(position));
+                //Log.d(TAG, "Entering the listener" + (int) parent.getItemIdAtPosition(position));
 //                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
                 //((TextView) parent.getChildAt(0)).setTextSize(23);
                 if ((int) parent.getItemIdAtPosition(position) > 0) {
@@ -73,7 +73,7 @@ public class SetRemarks extends Activity {
             public void onClick(View v) {
                 EditText et = (EditText) findViewById(R.id.RemarkText);
                 String RemarkString = et.getText().toString();
-                Log.d(TAG, "Remark need to be submitted "+ RemarkString);
+                //Log.d(TAG, "Remark need to be submitted "+ RemarkString);
             }
         });
     }

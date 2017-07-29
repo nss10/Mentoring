@@ -40,7 +40,7 @@ public class RatingBarDialog extends Activity {
             isRatingSubmittable = Boolean.parseBoolean(extras.getString("isRatingSubmittable"));
             mode = extras.getString("mode");
         }
-        Log.d(TAG, isRatingSubmittable + "");
+        //Log.d(TAG, isRatingSubmittable + "");
 
 
         String[] temp = ratingBarResultString.split("~");
@@ -48,7 +48,7 @@ public class RatingBarDialog extends Activity {
 
         for (int i = 0; i < ratingBarIdList.length; i++) {
             ratingBarResultList[i] = Integer.parseInt(temp[i]);
-            Log.d(TAG, "So and so: " + ratingBarResultList[i]);
+            //Log.d(TAG, "So and so: " + ratingBarResultList[i]);
         }
 
         if(mode.equals("edit"))

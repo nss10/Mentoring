@@ -37,7 +37,7 @@ public class CustomCursorAdapter extends CursorAdapter {
         TextView name = (TextView) view.findViewById(R.id.name);
         String std_name = cursor.getString(cursor.getColumnIndexOrThrow(mentorTable.column2));
         ImageView iv = (ImageView) view.findViewById(R.id.item_is_submittable);
-        Log.d(TAG,"Star status" + cursor.getString(cursor.getColumnIndex(mentorTable.column7)));
+        //Log.d(TAG,"Star status" + cursor.getString(cursor.getColumnIndex(mentorTable.column7)));
         if (cursor.getString(cursor.getColumnIndex(mentorTable.column7)).equals("1")) {
             iv.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_star_black_24dp));
         } else {

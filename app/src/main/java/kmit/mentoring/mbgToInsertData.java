@@ -44,13 +44,13 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
         String rating = params[5];
         String isRatingSubmittable = params[6];
         int studentSem=Integer.parseInt(params[7]);
-        Log.d(TAG,"studentSem" + studentSem);
+        //Log.d(TAG,"studentSem" + studentSem);
 
         String isStudentFlagged = params[8];
 
         try
         {
-            Log.d(TAG,"started mentorHome");
+            //Log.d(TAG,"started mentorHome");
 
             URL m_url = new URL(mentor_url);
             HttpURLConnection m_httpURLConnection = (HttpURLConnection) m_url.openConnection();
@@ -69,15 +69,15 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
                     +URLEncoder.encode("studentSem", "UTF-8")+"="+URLEncoder.encode(studentSem+"", "UTF-8")+"&"
                     +URLEncoder.encode("isStudentFlagged", "UTF-8")+"="+URLEncoder.encode(isStudentFlagged+"", "UTF-8");
 
-            Log.d(TAG,post_data);
+            //Log.d(TAG,post_data);
             bufferedWriter.write(post_data);
             bufferedWriter.flush();
             bufferedWriter.close();
             outputStream.close();
 
-            Log.d(TAG,"waiting begins");
+            //Log.d(TAG,"waiting begins");
             InputStream inputStream=m_httpURLConnection.getInputStream();
-            Log.d(TAG,"waiting ends");
+            //Log.d(TAG,"waiting ends");
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
             result="";
             String line="";
@@ -90,20 +90,20 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
             bufferedReader.close();
             inputStream.close();
             //Toast.makeText(context,"result is : <"+result+">",Toast.LENGTH_LONG).show();
-            Log.d(TAG,"result is : <"+result+">");
+            //Log.d(TAG,"result is : <"+result+">");
         }
         catch(MalformedURLException e)
         {
-            Log.d(TAG,"into catch1"+e);
+            //Log.d(TAG,"into catch1"+e);
         }
         catch(IOException e)
         {
-            Log.d(TAG,"into catch2:"+e);
+            //Log.d(TAG,"into catch2:"+e);
             result = "NO NET";
         }
         catch(Exception e)
         {
-            Log.d(TAG,"into catch3: "+e);
+            //Log.d(TAG,"into catch3: "+e);
         }
         finally {
 
@@ -115,7 +115,7 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         loading.dismiss();
-        Log.d(TAG,"After dismissing progress");
+        //Log.d(TAG,"After dismissing progress");
         if (result.matches("NO NET")) {
             Toast.makeText(this.context, "NO NET", Toast.LENGTH_LONG).show();
         }
@@ -125,7 +125,7 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Log.d(TAG,"Before showing progress");
+        //Log.d(TAG,"Before showing progress");
 
 
         loading = ProgressDialog.show(context,"Updating data to server","Please wait...",true,false);
@@ -147,7 +147,7 @@ public class mbgToInsertData extends AsyncTask<String,Void,String>{
             }
 
         }
-        Log.d(TAG,"out,result : <"+result+">");
+        //Log.d(TAG,"out,result : <"+result+">");
         super.onProgressUpdate(values);
     }
 }

@@ -33,7 +33,7 @@ public class studentBackground extends AsyncTask<String,Void,String> {
         String user_name=params[0];
         try
         {
-            Log.d(TAG,"started studentHomeBG");
+            //Log.d(TAG,"started studentHomeBG");
             URL s_url = new URL(student_url);
             HttpURLConnection s_httpURLConnection = (HttpURLConnection) s_url.openConnection();
             s_httpURLConnection.setRequestMethod("POST");
@@ -46,7 +46,7 @@ public class studentBackground extends AsyncTask<String,Void,String> {
             bufferedWriter.flush();
             bufferedWriter.close();
             outputStream.close();
-            Log.d(TAG,post_data);
+            //Log.d(TAG,post_data);
             InputStream inputStream=s_httpURLConnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
             result="";
@@ -54,7 +54,7 @@ public class studentBackground extends AsyncTask<String,Void,String> {
             while((line=bufferedReader.readLine())!=null)
             {
                 result+=line;
-                Log.d(TAG,"result is : <"+result+">");
+                //Log.d(TAG,"result is : <"+result+">");
             }
             bufferedReader.close();
             inputStream.close();
@@ -63,21 +63,21 @@ public class studentBackground extends AsyncTask<String,Void,String> {
         }
         catch(MalformedURLException e)
         {
-            Log.d(TAG,"into catch1"+e);
+            //Log.d(TAG,"into catch1"+e);
         }
         catch(IOException e)
         {
-            Log.d(TAG,"into catch2:"+e);
+            //Log.d(TAG,"into catch2:"+e);
             result = "NO Net";
             return result;
         }
         catch(Exception e)
         {
-            Log.d(TAG,"into catch3: "+e);
+            //Log.d(TAG,"into catch3: "+e);
         }
         finally
         {
-            Log.d(TAG,"Finally: "+result);
+            //Log.d(TAG,"Finally: "+result);
         }
         return null;
     }

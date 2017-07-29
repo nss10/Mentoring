@@ -61,8 +61,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.firebase.analytics.FirebaseAnalytics.Event;
+
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
@@ -142,7 +141,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         this.TAG = "StudentHome";
         this.FieldList = new String[]{"General Discipline", "Communication Skills", "Grooming", "Behavior With Peers", "Behavior With Faculty", "Co-Cirricular Activities", "Extra-Cirricular Activities"};
         this.FieldListAbbr = new String[]{"GD", "CS", "Grm", "BWP", "BWF", "CCA", "ECA"};
-        this.from = Event.LOGIN;
+        this.from = "login";
         this.shouldRatingbeUpdated = true;
         this.defaultImage = true;
         this.justLoggedIn = true;
@@ -164,18 +163,18 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
 
             protected void onPostExecute(Bitmap b) {
-                Log.d(StudentHome.this.TAG, "onPostExecute" + b);
+                //Log.d(StudentHome.this.TAG, "onPostExecute" + b);
                 super.onPostExecute(b);
                 this.loading.dismiss();
                 if (b != null && !StudentHome.this.isSharedPreferencesEmpty) {
                     student.setStudentImage(StudentHome.encodeTobase64(b));
                     SharedPreferences img_store = StudentHome.this.getSharedPreferences("img_store", 0);
-                    Log.d(StudentHome.this.TAG, "StudentImage adding in sharedPreferences" + student.getStudentImage());
+                    //Log.d(StudentHome.this.TAG, "StudentImage adding in sharedPreferences" + student.getStudentImage());
                     Editor editor = img_store.edit();
                     editor.putString("img_stud", student.getStudentImage());
                     editor.apply();
                     StudentHome.this.defaultImage = false;
-                    Log.d(StudentHome.this.TAG, "defaultImageStatus in onPostExecute = " + StudentHome.this.defaultImage);
+                    //Log.d(StudentHome.this.TAG, "defaultImageStatus in onPostExecute = " + StudentHome.this.defaultImage);
                     StudentHome.this.setCircularImage();
                 }
             }
@@ -188,7 +187,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     URL url = new URL(StudentHome.this.getString(R.string.connection_string) + "getImage.php?id=" + params[0]);
                     URL url2;
                     try {
-                        Log.d(StudentHome.this.TAG, BuildConfig.FLAVOR + url.openConnection().getInputStream());
+                        //Log.d(StudentHome.this.TAG, BuildConfig.FLAVOR + url.openConnection().getInputStream());
                         image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
                         url2 = url;
                     } catch (MalformedURLException e3) {
@@ -210,7 +209,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 return image;
             }
         }.execute(student.getSid());
-        Log.d(this.TAG, "sid when getting image = " + student.getSid());
+        //Log.d(this.TAG, "sid when getting image = " + student.getSid());
     }
     public static String encodeTobase64(Bitmap image) {
         Bitmap immagex = image;
@@ -225,7 +224,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     void setCircularImage() {
         if (!this.defaultImage) {
             ((CircleImageView) findViewById(R.id.circ_img)).setImageBitmap(decodeBase64(student.getStudentImage()));
-            Log.d(this.TAG, "getImage done");
+            //Log.d(this.TAG, "getImage done");
         }
     }
 
@@ -249,7 +248,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         } else if (id == R.id.view_remarks) {
             mViewRemarksView.setVisibility(View.VISIBLE);
         } else if (id == R.id.view_change_password) {
-            Log.d(this.TAG, "View Changing for ChangePassword");
+            //Log.d(this.TAG, "View Changing for ChangePassword");
             mChangePasswordView.setVisibility(View.VISIBLE);
         } else if (id == R.id.view_performance) {
             mViewPerformanceView.setVisibility(View.VISIBLE);
@@ -263,7 +262,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         ((TextView) findViewById(R.id.nameRight)).setText(student.getName());
         ((TextView) findViewById(R.id.parentNameRight)).setText(student.getParentName());
         ((TextView) findViewById(R.id.class_idRight)).setText(student.getYear() + BuildConfig.FLAVOR);
-        Log.d(this.TAG, "defaultImageStatus in setProfile = " + this.defaultImage);
+        //Log.d(this.TAG, "defaultImageStatus in setProfile = " + this.defaultImage);
         setCircularImage();
         ((TextView) findViewById(R.id.branchRight)).setText(student.getDepartment());
         ((TextView) findViewById(R.id.sectionRight)).setText(String.valueOf(student.getSection()));
@@ -271,16 +270,16 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
 
         ((TextView) findViewById(R.id.parentNoRight)).setText((student.getPhone()));
-        Log.d(this.TAG, "setProfile isStudentFlagged = " + student.isStudentFlagged());
+        //Log.d(this.TAG, "setProfile isStudentFlagged = " + student.isStudentFlagged());
         final CheckBox cb = (CheckBox) findViewById(R.id.checkBox);
         cb.setChecked(student.isStudentFlagged());
-        Log.d(this.TAG, student.getSid()  +":" + student.getPhone() + " : " + student.getPhone().equals("1111111111"));
+        //Log.d(this.TAG, student.getSid()  +":" + student.getPhone() + " : " + student.getPhone().equals("1111111111"));
 
         if (student.getPhone().equals("1111111111")) {
             ((TextView) findViewById(R.id.parentNoLeft)).setVisibility(View.INVISIBLE);
             ((TextView) findViewById(R.id.parentNoRight)).setVisibility(View.INVISIBLE);
         }
-        if (this.from.equals(Event.LOGIN)) {
+        if (this.from.equals("login")) {
             cb.setVisibility(View.INVISIBLE);
             ((TextView) findViewById(R.id.link_change_password)).setVisibility(View.VISIBLE);
         } else if (this.from.equals("mentor")) {
@@ -294,7 +293,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d(StudentHome.this.TAG, "isStudentFlagged = " + cb.isChecked());
+                //Log.d(StudentHome.this.TAG, "isStudentFlagged = " + cb.isChecked());
                 student.setStudentFlagged(cb.isChecked());
                 StudentHome studentHome = StudentHome.this;
                 localStruct kmit_mentoring_localStruct = new localStruct();
@@ -304,8 +303,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 String val = student.isStudentFlagged() ? "1" : "0";
                 ContentValues values = new ContentValues();
                 values.put(mentorTable.column8, val);
-                Log.d(StudentHome.this.TAG, "db.update val = " + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid() + "'", null));
-                Log.d(StudentHome.this.TAG, "isStudentFlagged is updated to the local as" + values);
+                //Log.d(StudentHome.this.TAG, "db.update val = " + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid() + "'", null));
+                //Log.d(StudentHome.this.TAG, "isStudentFlagged is updated to the local as" + values);
 
 
 
@@ -346,27 +345,27 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     public void onClick(DialogInterface dialog, int which) {
                         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                         String cur_date = dateFormat.format(new Date());
-                        Log.d(StudentHome.this.TAG, new_rem + " " + cur_date);
+                        //Log.d(StudentHome.this.TAG, new_rem + " " + cur_date);
                         ContentValues values = new ContentValues();
 
                         if(student.getNew_remarkList()==null)
                             student.setLocalRemarks(new_rem,cur_date);
                         else
                         {
-                            Log.d(TAG,"size = "+student.getNew_remarkList().size());
+                            //Log.d(TAG,"size = "+student.getNew_remarkList().size());
                             student.setLocalRemarks(new_rem,cur_date);
-                            Log.d(TAG,"size = "+student.getNew_remarkList().size());
+                            //Log.d(TAG,"size = "+student.getNew_remarkList().size());
                         }
 
                         Remark cumulativeLocalRemark = student.getCumulativeLocalRemark();
                         values.put(mentorTable.column4, cumulativeLocalRemark.getRemarkString());
                         values.put(mentorTable.column5, cumulativeLocalRemark.getDate());
-                        Log.d(TAG,"" + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid()+ "'", null));
+                        //Log.d(TAG,"" + StudentHome.this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid()+ "'", null));
 
 
 
                         Toast.makeText(StudentHome.this.getApplicationContext(), "Remark Entered", Toast.LENGTH_SHORT).show();
-                        Log.d(StudentHome.this.TAG, new_rem + " " + cur_date + " string = " + cumulativeLocalRemark.toString() + "values = " + values.toString());
+                        //Log.d(StudentHome.this.TAG, new_rem + " " + cur_date + " string = " + cumulativeLocalRemark.toString() + "values = " + values.toString());
                         et.getText().clear();
 
                     }
@@ -404,7 +403,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                            Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
+                            //Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
                             i.putExtra("ratingBarResultString", student.getRatingBarResultString());
                             i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
                             i.putExtra("mode", "edit");
@@ -415,7 +414,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                            Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
+                            //Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
                             i.putExtra("ratingBarResultString", student.getRatingBarResultString());
                             i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
                             i.putExtra("mode", "view");
@@ -432,7 +431,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     return;
                 }
                 Intent i = new Intent(StudentHome.this, RatingBarDialog.class);
-                Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
+                //Log.d(StudentHome.this.TAG, "So and So:" + student.getRatingBarResultString());
                 i.putExtra("ratingBarResultString", student.getRatingBarResultString());
                 i.putExtra("isRatingSubmittable", student.isRatingSubmittable() + BuildConfig.FLAVOR);
                 i.putExtra("mode", "edit");
@@ -451,7 +450,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         sp.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
+                //Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
                 if (imm != null) {
                     imm.toggleSoftInput(1, 0);
                 }
@@ -482,7 +481,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     }
     void getRemarks() {
 
-        Log.d(TAG,"student = "+student.toString());
+        //Log.d(TAG,"student = "+student.toString());
 
         TextView RemUI = (TextView) findViewById(R.id.Remarks);
         RemUI.setText("");
@@ -498,7 +497,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         {
             ArrayList<Remark> localRemList = student.getNew_remarkList();
             ArrayList<Remark> serverRemList = student.getRemarkList();
-            Log.d(TAG,"localRemarksList = " + String.valueOf(localRemList!=null) + "serverRemarksList = " + String.valueOf(serverRemList!=null));
+            //Log.d(TAG,"localRemarksList = " + String.valueOf(localRemList!=null) + "serverRemarksList = " + String.valueOf(serverRemList!=null));
             if(localRemList!=null)
                 for(int i=localRemList.size()-1;i>=0;i--)
                 {
@@ -535,7 +534,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         this.sp.setAdapter(this.adapter);
         this.sp.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
+                //Log.d(StudentHome.this.TAG, "Entering the listener" + ((int) parent.getItemIdAtPosition(position)));
                 ((TextView) parent.getChildAt(0)).setTextSize(18.0f);
                 if (((int) parent.getItemIdAtPosition(position)) > 0) {
                     ((TextView) StudentHome.this.findViewById(R.id.NoGraph)).setVisibility(View.INVISIBLE);
@@ -550,7 +549,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-        Log.d(this.TAG, "acadAggr before acadGraph = " + student.getAcadAggr() + BuildConfig.FLAVOR);
+        //Log.d(this.TAG, "acadAggr before acadGraph = " + student.getAcadAggr() + BuildConfig.FLAVOR);
         getAcadGraph(student.getAcadAggr());
         getAggrGraph();
     }
@@ -579,9 +578,9 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
     from = getIntent().getExtras()==null?"login":"mentor";
     if(from.equals("login")) {
-        Log.d(TAG, username);
+        //Log.d(TAG, username);
         sbg.execute(username, mPort);
-        Log.d(TAG, "Started on progresUpdate");
+        //Log.d(TAG, "Started on progresUpdate");
         sbg.onProgressUpdate();
 
         if (sbg.result.equals("NO Net") || sbg.result.equals("Error_studentHome_php")) {
@@ -594,7 +593,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
         } else {
             tempResult = sbg.result;
-            Log.d(TAG,sbg.result);
+            //Log.d(TAG,sbg.result);
             student = new Student(sbg.result);
             SharedPreferences settings = getSharedPreferences("StudResult", MODE_PRIVATE);
 
@@ -605,7 +604,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 
             // Reading from SharedPreferences
             String value = settings.getString("key", "");
-            Log.d(TAG, value + tempResult);
+            //Log.d(TAG, value + tempResult);
         }
     }
 
@@ -613,7 +612,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         if (extras != null) {
             this.mentor_id = extras.getString("mentor_id");
             student = extras.getParcelable("studObj");
-            Log.d(TAG,student.toString());
+            //Log.d(TAG,student.toString());
             this.state = extras.getString("state");
 
             student.setStudentImage(getSharedPreferences("img_store", 0).getString("img_stud", "null"));
@@ -622,21 +621,21 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             }
 //                uncomment to show the changing intent problem
 
-            Log.d(this.TAG, "defaultImageStatus in fromMentor = " + this.defaultImage + " : " + student.getStudentImage());
+            //Log.d(this.TAG, "defaultImageStatus in fromMentor = " + this.defaultImage + " : " + student.getStudentImage());
             this.from = "mentor";
         } else {
             student.setStudentImage(getSharedPreferences("img_store", 0).getString("img_stud", "null"));
-            Log.d(this.TAG, "getting studentImage from SharedPreferences = " + student.getStudentImage());
+            //Log.d(this.TAG, "getting studentImage from SharedPreferences = " + student.getStudentImage());
             if (!student.getStudentImage().equals("null")) {
                 this.defaultImage = false;
             }
-            Log.d(this.TAG, "defaultImageStatus in getData(extras==null) = " + this.defaultImage);
+            //Log.d(this.TAG, "defaultImageStatus in getData(extras==null) = " + this.defaultImage);
         }
     if (this.tempResult != null) {
 
-        if (this.from.equals(Event.LOGIN) && this.justLoggedIn) {
+        if (this.from.equals("login") && this.justLoggedIn) {
             getImage();
-            Log.d(this.TAG, "Getting Image");
+            //Log.d(this.TAG, "Getting Image");
             this.justLoggedIn = false;
         }
 
@@ -651,7 +650,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         ContentValues values = new ContentValues();
         values.put(mentorTable.column6, student.getRatingBarResultString());
         values.put(mentorTable.column7, val);
-        Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid()+ "'", null)+student.getRatingBarResultString()+ "isRatingSubmittable in LocalStruct " + student.isRatingSubmittable());
+        //Log.d(this.TAG, "Local Rating Updated " + this.db.update(mentorTable.table_name, values, "ht_no='" + student.getSid()+ "'", null)+student.getRatingBarResultString()+ "isRatingSubmittable in LocalStruct " + student.isRatingSubmittable());
     }
 
 
@@ -683,7 +682,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         });
     }
     public static double round(double value, int places) {
-        Log.d("StudentHome", value + "");
+        //Log.d("StudentHome", value + "");
         if (((int) value) == 0) {
             return 0.0d;
         }
@@ -946,7 +945,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         for (int i = 0; i < acadCount; i++) {
 
             dp[i] = new DataPoint(i, student.getAcadArr()[i]);
-            Log.d(TAG, student.getAcadArr()[i] + "");
+            //Log.d(TAG, student.getAcadArr()[i] + "");
         }
         series = new BarGraphSeries<>(dp);
         graph.removeAllSeries();
@@ -1129,12 +1128,12 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         this.scbg = new statusCheckBG(this);
         this.scbg.execute(port, student.getSid());
         this.scbg.onProgressUpdate();
-        Log.d(this.TAG, "scbg.result" + this.scbg.result);
+        //Log.d(this.TAG, "scbg.result" + this.scbg.result);
         if (!this.scbg.result.matches("NO NET")) {
             return this.scbg.result;
         }
         Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
-        Log.d(this.TAG, "Just before return");
+        //Log.d(this.TAG, "Just before return");
         return null;
     }
     public String getIMEI(Context context) {
@@ -1147,7 +1146,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
 //Events and Actions
 
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(this.TAG, "Reached in Student");
+        //Log.d(this.TAG, "Reached in Student");
         super.onCreate(savedInstanceState);
         mPort = getString(R.string.connection_string);
         getData();
@@ -1170,7 +1169,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             toolbar.setTitleTextColor(Color.GRAY);
 
             final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            if (this.from.equals(Event.LOGIN)) {
+            if (this.from.equals("login")) {
                 navigationView.getMenu().getItem(0).setVisible(true);
                 navigationView.getMenu().getItem(1).setVisible(false);
             } else {
@@ -1183,7 +1182,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                 public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                     navigationView.removeOnLayoutChangeListener(this);
                     TextView textView = (TextView) navigationView.findViewById(R.id.temp2);
-                    if (StudentHome.this.from.equals(Event.LOGIN)) {
+                    if (StudentHome.this.from.equals("login")) {
                         textView.setText("Hello " + student.getName());
                     } else {
                         textView.setText("This is " + student.getName());
@@ -1238,7 +1237,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             });
             new Handler().postDelayed(new Runnable() {
                 public void run() {
-                    if (!StudentHome.this.from.equals(Event.LOGIN)) {
+                    if (!StudentHome.this.from.equals("login")) {
                         return;
                     }
                     if (StudentHome.this.getLoginStatus() != null) {
@@ -1255,7 +1254,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                         }
                     }
                     StudentHome.this.hasInternet = false;
-                    Log.d(StudentHome.this.TAG, "Internet Status" + StudentHome.this.hasInternet);
+                    //Log.d(StudentHome.this.TAG, "Internet Status" + StudentHome.this.hasInternet);
                 }
             }, 5000);
         }
@@ -1265,7 +1264,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         if (requestCode == 2) {
             student.setRatingBarResultString(data.getStringExtra("Rating String"));
             student.setRatingSubmittable(Boolean.parseBoolean(data.getStringExtra("isSubmittable")));
-            Log.d(this.TAG, "onActivityResult isRatingSubmittable: " + student.isRatingSubmittable());
+            //Log.d(this.TAG, "onActivityResult isRatingSubmittable: " + student.isRatingSubmittable());
             updateRatingToLocal();
         }
     }
@@ -1305,7 +1304,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         lbg.execute(getString(R.string.connection_string), student.getSid(),getIMEI(this));
         lbg.onProgressUpdate(new Void[0]);
         getApplicationContext().getSharedPreferences("img_store", 0).edit().clear().commit();
-        Log.d(this.TAG, "Shared Preferences are cleared");
+        //Log.d(this.TAG, "Shared Preferences are cleared");
 
         this.isSharedPreferencesEmpty = true;
         startActivity(new Intent(this, MainActivity.class));
@@ -1315,7 +1314,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         getData();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (id == R.id.Logout) {
-            Log.d(this.TAG, "hasInternet = " + this.hasInternet);
+            //Log.d(this.TAG, "hasInternet = " + this.hasInternet);
             ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START, true);
             if (getLoginStatus() == null) {
                 this.hasInternet = false;
@@ -1346,7 +1345,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     lbg.execute(port, student.getSid());
                 } else {
                     alertDialog.show();
-                    Log.d(this.TAG, "Dialog shown");
+                    //Log.d(this.TAG, "Dialog shown");
                 }
                 final Handler h1 = new Handler();
                 h1.post(new Runnable() {
@@ -1387,7 +1386,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             setProfile();
             getAttGraph(student.getAttendance());
         } else if (v.getId() == R.id.UpdateToServerStudentSide) {
-            Log.d(this.TAG, "Update To server Clicked");
+            //Log.d(this.TAG, "Update To server Clicked");
             Button b = (Button) findViewById(R.id.UpdateToServerStudentSide);
             b.setText("Updating Data...");
             b.setClickable(false);

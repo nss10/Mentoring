@@ -43,7 +43,7 @@ public class getOTPBG extends AsyncTask<String, Void, String> {
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             String post_data = URLEncoder.encode("user_name", "UTF-8") + "=" + URLEncoder.encode(this.user_name, "UTF-8");
             bufferedWriter.write(post_data);
-            Log.d(this.TAG, post_data);
+            //Log.d(this.TAG, post_data);
             bufferedWriter.flush();
             bufferedWriter.close();
             outputStream.close();
@@ -59,21 +59,21 @@ public class getOTPBG extends AsyncTask<String, Void, String> {
                     bufferedReader.close();
                     inputStream.close();
                     httpURLConnection.disconnect();
-                    Log.d(this.TAG, "finally: " + this.result);
+                    //Log.d(this.TAG, "finally: " + this.result);
                     return this.result;
                 }
             }
         } catch (MalformedURLException e) {
-            Log.d(this.TAG, "into catch1" + e);
-            Log.d(this.TAG, "finally: " + this.result);
+            //Log.d(this.TAG, "into catch1" + e);
+            //Log.d(this.TAG, "finally: " + this.result);
             return this.result;
         } catch (IOException e2) {
-            Log.d(this.TAG, "into catch2:" + e2);
+            //Log.d(this.TAG, "into catch2:" + e2);
             this.result = "NO NET";
-            Log.d(this.TAG, "finally: " + this.result);
+            //Log.d(this.TAG, "finally: " + this.result);
             return this.result;
         } catch (Throwable th) {
-            Log.d(this.TAG, "finally: " + this.result);
+            //Log.d(this.TAG, "finally: " + this.result);
             return this.result;
         }
     }
@@ -89,7 +89,7 @@ public class getOTPBG extends AsyncTask<String, Void, String> {
     protected void onProgressUpdate(Void... values) {
         while (true) {
             if (this.result != null && this.result != BuildConfig.FLAVOR) {
-                Log.d(this.TAG, "out , result : <" + this.result + ">");
+                //Log.d(this.TAG, "out , result : <" + this.result + ">");
                 super.onProgressUpdate(values);
                 return;
             }

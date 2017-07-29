@@ -83,7 +83,7 @@ public class Student implements Parcelable {
             remarkList=null;
         else
         {
-            Log.d("Rajni",listData[7] + "\n" + listData[8]);
+            //Log.d("Rajni",listData[7] + "\n" + listData[8]);
             String tempRemarkArr[] = listData[7].split("~");
             String tempDateArr[] = listData[8].split("~");
             remarkList = new ArrayList<>();
@@ -92,7 +92,7 @@ public class Student implements Parcelable {
                 remarkList.add(new Remark(tempRemarkArr[i],tempDateArr[i]));
         }
 
-        Log.d("Rajni",sid + listData[9]);
+        //Log.d("Rajni",sid + listData[9]);
         if(!listData[9].equalsIgnoreCase("Not graded"))
             mentorFields = new  MentorFields(listData[9]);
 

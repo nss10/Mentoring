@@ -28,14 +28,14 @@ public class mentorBackground extends AsyncTask<String,Void,String>{
     mentorBackground(Context ctx){context=ctx;}
     @Override
     protected String doInBackground(String... params) {
-        Log.d(TAG,"started mentorHome");
+        //Log.d(TAG,"started mentorHome");
         String port=params[1];
         String mentor_url=port+"mentorHome.php";
         //String mentor_url="http://192.168.43.231/mentorHome.php";
         String user_name=params[0];
         try
         {
-            Log.d(TAG,"started mentorHome");
+            //Log.d(TAG,"started mentorHome");
             URL m_url = new URL(mentor_url);
             HttpURLConnection m_httpURLConnection = (HttpURLConnection) m_url.openConnection();
             m_httpURLConnection.setRequestMethod("POST");
@@ -50,7 +50,7 @@ public class mentorBackground extends AsyncTask<String,Void,String>{
             outputStream.close();
             InputStream inputStream=m_httpURLConnection.getInputStream();
             BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-            Log.d(TAG,post_data);
+            //Log.d(TAG,post_data);
             result="";
             String line="";
             while((line=bufferedReader.readLine())!=null)
@@ -60,20 +60,20 @@ public class mentorBackground extends AsyncTask<String,Void,String>{
             bufferedReader.close();
             inputStream.close();
             //Toast.makeText(context,"result is : <"+result+">",Toast.LENGTH_LONG).show();
-            Log.d(TAG,"result is : <"+result+">");
+            //Log.d(TAG,"result is : <"+result+">");
         }
         catch(MalformedURLException e)
         {
-            Log.d(TAG,"into catch1"+e);
+            //Log.d(TAG,"into catch1"+e);
         }
         catch(IOException e)
         {
-            Log.d(TAG,"into catch2:"+e);
+            //Log.d(TAG,"into catch2:"+e);
             result = "NO NET";
         }
         catch(Exception e)
         {
-            Log.d(TAG,"into catch3: "+e);
+            //Log.d(TAG,"into catch3: "+e);
         }
         finally{
             return result;
@@ -97,7 +97,7 @@ public class mentorBackground extends AsyncTask<String,Void,String>{
         {
             //Log.d(TAG,"result :<"+result+">");
         }
-        Log.d(TAG,"out,result : <"+result+">");
+        //Log.d(TAG,"out,result : <"+result+">");
         super.onProgressUpdate(values);
     }
 }

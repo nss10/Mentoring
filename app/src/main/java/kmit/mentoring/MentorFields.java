@@ -70,7 +70,7 @@ public class MentorFields implements Parcelable {
             eca[i] = Integer.parseInt(tempArr[i]);
 
 
-        Log.d(TAG,tempMfArr[6]);
+        //Log.d(TAG,tempMfArr[6]);
         tempArr = tempMfArr[7].split(",");
         aggr = new int[tempArr.length];
         for(int i = 0;i<tempArr.length;i++)

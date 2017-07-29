@@ -10,6 +10,4 @@ public class imageWarehouse {
 
     public static HashMap<String,String> imageMap = new HashMap();
 
-
-
 }

@@ -40,6 +40,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:name=".MentorHome"
             android:launchMode="standard">

@@ -26,7 +26,7 @@ public class mentorlogin extends Activity implements OnClickListener {
     }
 
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(this.TAG, "Login called");
+        //Log.d(this.TAG, "Login called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loginmentor);
         this.mentorid = (EditText) findViewById(R.id.editText);

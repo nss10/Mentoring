@@ -178,7 +178,25 @@ public class MainActivity extends AppCompatActivity
         }
         else if(id==R.id.Report_Bug) {
 
-            goToUrl("https://goo.gl/forms/LhgsYP4n03M1NkcG2");
+            final AlertDialog alertDialog;
+            alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Are you sure?");
+            alertDialog.setMessage("Do you want to leave the app?");
+            alertDialog.setCancelable(false);
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    goToUrl("https://goo.gl/forms/LhgsYP4n03M1NkcG2");
+
+                }
+            });
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    alertDialog.dismiss();
+                }
+            });
+            alertDialog.show();
 
         }
 

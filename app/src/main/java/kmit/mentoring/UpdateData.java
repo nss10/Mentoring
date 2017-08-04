@@ -62,17 +62,13 @@ public class UpdateData {
         Log.d(this.TAG, "here we go isRatingSubmittable - "+ sid +"-" + rating + "sem = " + studentSem);
         mbgToInsertData kmit_mentoring_mbgToInsertData = new mbgToInsertData(this.context);
         Log.d(this.TAG, remarks);
-        Log.d(this.TAG,"printing test");
 
         kmit_mentoring_mbgToInsertData.execute(new String[]{this.port, this.username, sid, remarks, date, rating, isRatingSubmittable, this.studentSem +"", isStudentFlagged});
-//        kmit_mentoring_mbgToInsertData.onProgressUpdate(new Void[0]);
+        kmit_mentoring_mbgToInsertData.onProgressUpdate(new Void[0]);
 
         Log.d(this.TAG,"printing Result - "+  kmit_mentoring_mbgToInsertData.result);
-        /*if (kmit_mentoring_mbgToInsertData.result.matches("NO NET")) {
-            Toast.makeText(this.context, "NO NET", Toast.LENGTH_LONG).show();
-            return false;
-        }*/
-        return true;
+
+        return !kmit_mentoring_mbgToInsertData.result.matches("NO NET");
     }
 
     String getCurMF(int sem, String[] mf) {

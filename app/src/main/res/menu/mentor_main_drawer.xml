@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
         <item
@@ -16,27 +17,22 @@
             android:icon="@drawable/logout"
             android:title="LOGOUT" />
 
-        <item
-            android:id="@+id/Report_Bug"
-            android:icon="@drawable/ic_bug_report_black_24dp"
-            android:title="REPORT BUG" />
+
         <!--<item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="Tools" />!-->
     </group>
+    <br>
 
-    <!--<item android:title="Communicate">
+    </br>
+    <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/Report_Bug"
+                android:icon="@drawable/ic_report_black_24dp"
+                android:title="REPORT AN ISSUE" />
         </menu>
-    </item>!-->
+    </item>
 
 </menu>

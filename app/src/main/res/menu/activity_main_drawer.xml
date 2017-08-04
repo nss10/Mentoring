@@ -10,10 +10,7 @@
             android:id="@+id/student"
             android:icon="@drawable/std"
             android:title="STUDENT" />
-        <item
-            android:id="@+id/Report_Bug"
-            android:icon="@drawable/ic_bug_report_black_24dp"
-            android:title="REPORT BUG" />
+
         <!--<item
             android:id="@+id/admin"
             android:icon="@drawable/admin"
@@ -26,17 +23,13 @@
 
     </group>
 
-    <!--<item android:title="Communicate">
+    <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/Report_Bug"
+                android:icon="@drawable/ic_report_black_24dp"
+                android:title="REPORT AN ISSUE" />
         </menu>
-    </item>!-->
+    </item>
 
 </menu>

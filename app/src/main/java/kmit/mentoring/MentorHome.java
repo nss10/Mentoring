@@ -494,7 +494,8 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
 
                         Log.d(TAG,"ButtonClicked -> UpdateToServer");
                         MentorHome.this.UpdateToServer();
-                        MentorHome.this.getDataFromServer();
+                        if(MentorHome.this.isDataUpdated)
+                            MentorHome.this.getDataFromServer();
                         MentorHome.this.UIonDataUpdate();
                         if(loading!=null)
                             MentorHome.this.loading.dismiss();
@@ -530,10 +531,11 @@ public class MentorHome extends Activity implements OnNavigationItemSelectedList
         }
         if (this.isDataUpdated || !shouldUpdate) {
             Editor editor = getApplicationContext().getSharedPreferences(getString(R.string.sp_file_name), 0).edit();
+            SharedPreferences img_store = this.getSharedPreferences("img_store", 0);
             this.db.delete(mentorTable.table_name, null, null);
             editor.remove("username");
             editor.remove("login_status");
-            editor.remove("image_stud");
+            img_store.edit().clear().commit();
             editor.commit();
             imageWarehouse.imageMap = null; //emptying the images
             LogoutBG lbg = new LogoutBG(this);

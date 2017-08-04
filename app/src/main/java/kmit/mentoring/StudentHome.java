@@ -123,7 +123,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
     String mentor_id;
     String tempResult;
     String mPort;
-
+    String IMEIfromDB;
+    String IMEIlocal;
     Spinner sp;
     TextView mentorNameTV;
     BottomBar bottomBar;
@@ -582,8 +583,8 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         sbg.execute(username, mPort);
         Log.d(TAG, "Started on progresUpdate");
         sbg.onProgressUpdate();
-
-        if (sbg.result.equals("NO Net") || sbg.result.equals("Error_studentHome_php")) {
+        Log.d(TAG,"BGresult" + sbg.result);
+        if (sbg.result.equalsIgnoreCase("NO Net") || sbg.result.equals("Error_studentHome_php")) {
 
 
             SharedPreferences sharedPreferences2 = getApplicationContext().getSharedPreferences("StudResult", Context.MODE_PRIVATE);
@@ -1128,11 +1129,12 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         this.scbg = new statusCheckBG(this);
         this.scbg.execute(port, student.getSid());
         this.scbg.onProgressUpdate();
-        Log.d(this.TAG, "scbg.result" + this.scbg.result);
+        Log.d(this.TAG, "getLoginStatusCalled");
+        Log.d(this.TAG, "scbg.result is" + this.scbg.result);
         if (!this.scbg.result.matches("NO NET")) {
             return this.scbg.result;
         }
-        Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, this.scbg.result, Toast.LENGTH_SHORT).show();
         Log.d(this.TAG, "Just before return");
         return null;
     }
@@ -1165,7 +1167,6 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
-            toolbar.setTitle("My Attendance");
             toolbar.setTitleTextColor(Color.GRAY);
 
             final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -1240,9 +1241,11 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                     if (!StudentHome.this.from.equals("login")) {
                         return;
                     }
-                    if (StudentHome.this.getLoginStatus() != null) {
-                        StudentHome.this.LoggedInDevices = StudentHome.this.getLoginStatus().split(",");
-                        if (!StudentHome.this.getLoginStatus().contains(StudentHome.this.getIMEI(StudentHome.this))) {
+                    IMEIfromDB =StudentHome.this.getLoginStatus();
+                    IMEIlocal = StudentHome.this.getIMEI(StudentHome.this);
+                    if ( IMEIfromDB!= null) {
+                        StudentHome.this.LoggedInDevices = IMEIfromDB.split(",");
+                        if (!IMEIfromDB.contains(IMEIlocal)) {
                             Toast.makeText(StudentHome.this, "You are logged out from " + student.getSid(), Toast.LENGTH_SHORT).show();
                             StudentHome.this.onLogout();
                             return;
@@ -1250,13 +1253,14 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
                             Toast.makeText(StudentHome.this, "You are currently logged in " + StudentHome.this.LoggedInDevices.length + " device(s)", Toast.LENGTH_SHORT).show();
                             return;
                         } else {
+                            Toast.makeText(StudentHome.this, "NO NET", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
                     StudentHome.this.hasInternet = false;
                     Log.d(StudentHome.this.TAG, "Internet Status" + StudentHome.this.hasInternet);
                 }
-            }, 5000);
+            }, 2000);
         }
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1301,7 +1305,7 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         editor.remove("login_status");
         editor.commit();
         LogoutBG lbg = new LogoutBG(this);
-        lbg.execute(getString(R.string.connection_string), student.getSid(),getIMEI(this));
+        lbg.execute(getString(R.string.connection_string), student.getSid(),IMEIlocal);
         lbg.onProgressUpdate(new Void[0]);
         getApplicationContext().getSharedPreferences("img_store", 0).edit().clear().commit();
         Log.d(this.TAG, "Shared Preferences are cleared");
@@ -1316,53 +1320,64 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
         if (id == R.id.Logout) {
             Log.d(this.TAG, "hasInternet = " + this.hasInternet);
             ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer((int) GravityCompat.START, true);
-            if (getLoginStatus() == null) {
-                this.hasInternet = false;
-            } else {
-                this.hasInternet = true;
-            }
-            if (this.hasInternet) {
-                final LogoutBG lbg = new LogoutBG(this);
-                final String port = getString(R.string.connection_string);
-                AlertDialog alertDialog = new Builder(this).create();
-                alertDialog.setTitle("Logout");
-                alertDialog.setMessage("Your account is already active in some other device");
-                alertDialog.setButton(-1, "All Devices", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        lbg.execute(port, student.getSid());
-
+            final ProgressDialog loading = ProgressDialog.show(StudentHome.this, "Logging out...", "Please wait", true, true);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (getLoginStatus() == null) {
+                        StudentHome.this.hasInternet = false;
+                    } else {
+                        StudentHome.this.hasInternet = true;
                     }
-                });
-                alertDialog.setButton(-2, "Current Device", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        lbg.execute(port, student.getSid(), StudentHome.this.getIMEI(StudentHome.this));
+                    if (StudentHome.this.hasInternet) {
+                        final LogoutBG lbg = new LogoutBG(StudentHome.this);
+                        final String port = getString(R.string.connection_string);
+                        AlertDialog alertDialog = new Builder(StudentHome.this).create();
+                        alertDialog.setTitle("Logout");
+                        alertDialog.setMessage("Your account is already active in some other device");
+                        alertDialog.setButton(-1, "All Devices", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                lbg.execute(port, student.getSid());
 
-                    }
-                });
-                if (this.LoggedInDevices == null || this.LoggedInDevices.length <= 1) {
-                    lbg.execute(port, student.getSid());
-                } else {
-                    alertDialog.show();
-                    Log.d(this.TAG, "Dialog shown");
-                }
-                final Handler h1 = new Handler();
-                h1.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (lbg.result == null || lbg.result.equals(BuildConfig.FLAVOR)) {
-                            h1.postDelayed(this, 5);
-                        } else if (lbg.result.equals("1")) {
-                            StudentHome.this.onLogout();
+                            }
+                        });
+                        alertDialog.setButton(-2, "Current Device", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                lbg.execute(port, student.getSid(), IMEIlocal);
+
+                            }
+                        });
+                        if (StudentHome.this.LoggedInDevices == null || StudentHome.this.LoggedInDevices.length <= 1) {
+                            lbg.execute(port, student.getSid());
                         } else {
-                            Toast.makeText(StudentHome.this, "Unable to logout", Toast.LENGTH_SHORT).show();
+                            alertDialog.show();
+                            Log.d(StudentHome.this.TAG, "Dialog shown");
                         }
+                        final Handler h1 = new Handler();
+                        h1.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (lbg.result == null || lbg.result.equals(BuildConfig.FLAVOR)) {
+                                    h1.postDelayed(this, 5);
+                                } else if (lbg.result.equals("1")) {
+                                    StudentHome.this.onLogout();
+                                } else {
+                                    Toast.makeText(StudentHome.this, "Unable to logout", Toast.LENGTH_SHORT).show();
+                                    loading.dismiss();
+
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(StudentHome.this, "NO NET", Toast.LENGTH_SHORT).show();
+                        loading.dismiss();
+
                     }
-                });
-            } else {
-                Toast.makeText(this, "NO NET", Toast.LENGTH_SHORT).show();
-            }
+                }
+            },300);
+
         } else if (id == R.id.Back) {
             startActivity(new Intent(this, MentorHome.class));
         }
@@ -1406,21 +1421,35 @@ public class StudentHome extends Activity implements OnNavigationItemSelectedLis
             getAttGraph(student.getAttendance());
         } else if (v.getId() == R.id.UpdateToServerStudentSide) {
             Log.d(this.TAG, "Update To server Clicked");
-            Button b = (Button) findViewById(R.id.UpdateToServerStudentSide);
+            final Button b = (Button) findViewById(R.id.UpdateToServerStudentSide);
             b.setText("Updating Data...");
+            final ProgressDialog loading = ProgressDialog.show(StudentHome.this, "Updating data to the server...", null, true, true);
             b.setClickable(false);
-            if (new UpdateData(this, getString(R.string.connection_string), this.mentor_id,student.getSem()).UpdateToServer()) {
-                Toast.makeText(this, "Data Updated", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(this, MentorHome.class);
-                i.putExtra("coming_from", student.getSid());
-                Editor editor = getApplicationContext().getSharedPreferences("from_student", 0).edit();
-                editor.putString("from_sid", student.getSid());
-                editor.commit();
-                startActivity(i);
-                return;
-            }
-            Toast.makeText(this, "NO NET", Toast.LENGTH_LONG).show();
-            b.setText("CLICK TO UPDATE TO SERVER");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (new UpdateData(StudentHome.this, getString(R.string.connection_string), StudentHome.this.mentor_id,student.getSem()).UpdateToServer()) {
+                        Toast.makeText(StudentHome.this, "Data Updated", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(StudentHome.this, MentorHome.class);
+                        i.putExtra("coming_from", student.getSid());
+                        Editor editor = getApplicationContext().getSharedPreferences("from_student", 0).edit();
+                        editor.putString("from_sid", student.getSid());
+                        editor.commit();
+                        startActivity(i);
+                        return;
+                    }
+                }
+            }, 200);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loading.dismiss();
+                    b.setText("CLICK TO UPDATE TO SERVER");
+                    b.setClickable(true);
+                }
+            },2000);
+
         }
     }
 

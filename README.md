@@ -39,14 +39,18 @@
 * Similarly, when a student is logged in 
   * he can view his profile information and feedback given to him by his mentors.
 * This addresses the problem of authorization and confidentiality since a mentor can only view/edit the data of his mentees and students' can view only their information when logged in. 
+##### _Sample Student Profile_
+
+![Sample Student profile](./resources/profile_view.jpeg) 
 
 #### _Graphs and stars_
 * When a mentor records students' performances in certain fields, 
   * instead of viewing and entering numbers to rate a student's performance the app chooses the following modes of input and output
     * <strong>Input - _Star view_ </strong>
-      * _Image of star view..._
+    
+    ![Star view](./resources/star_fields.jpeg) 
     * <strong> Output - _Graph View_</strong>
-      * _Image of graph view..._
+      ![Graph view](./resources/graph_view.jpeg) 
 * This solves the problem of Data visualization. 
   
 

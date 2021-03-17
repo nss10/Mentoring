@@ -50,6 +50,7 @@
     
     ![Star view](./resources/star_fields.jpeg) 
     * <strong> Output - _Graph View_</strong>
+    
       ![Graph view](./resources/graph_view.jpeg) 
 * This solves the problem of Data visualization. 
   
